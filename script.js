@@ -107,13 +107,21 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCategoryNav();
   initTypewriter();
 
-  // Sinkronisasi Cloud Firestore
-  listenCloudBanner();
-  listenCloudArticles();
-  listenCloudPosters();
-  listenCloudSettings();
-  listenCloudTeam();
-  listenCloudAgendas();
+  // Sinkronisasi Cloud Firestore dengan fallback polling inisialisasi
+  const initFirestoreSync = () => {
+    if (typeof db !== "undefined") {
+      listenCloudBanner();
+      listenCloudArticles();
+      listenCloudPosters();
+      listenCloudSettings();
+      listenCloudTeam();
+      listenCloudAgendas();
+    } else {
+      setTimeout(initFirestoreSync, 200);
+    }
+  };
+
+  initFirestoreSync();
 });
 
 // Listener Event Modal
@@ -143,12 +151,11 @@ function listenCloudBanner() {
     if (doc.exists) {
       const data = doc.data();
       if (data && data.imageUrl && data.imageUrl.trim() !== "") {
-        // Terapkan transisi pergantian gambar halus
-        heroImg.style.opacity = "0.7";
-        setTimeout(() => {
-          heroImg.src = data.imageUrl;
-          heroImg.style.opacity = "1";
-        }, 150);
+        const newImgUrl = data.imageUrl.trim();
+        
+        // Terapkan URL secara langsung tanpa jeda setTimeout
+        heroImg.src = newImgUrl;
+        heroImg.style.opacity = "1";
       }
     }
   }, err => {
