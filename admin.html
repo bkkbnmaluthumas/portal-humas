@@ -265,7 +265,7 @@
               </div>
 
               <div>
-                <label class="block font-bold text-slate-700 mb-1">Atau Gunakan Tautan URL / File Gambar</label>
+                <label class="block font-bold text-slate-700 mb-1">Tautan Direct URL Gambar Aktif</label>
                 <input 
                   type="text" 
                   id="bannerImageUrlInput" 
@@ -291,7 +291,7 @@
             <div>
               <label class="block font-bold text-slate-700 mb-1">Pratinjau Foto Banner Saat Ini</label>
               <div class="w-full h-40 rounded-xl border border-slate-200 overflow-hidden bg-slate-50 flex items-center justify-center relative">
-                <img id="bannerImagePreview" src="" alt="Pratinjau Banner" class="w-full h-full object-cover hidden">
+                <img id="bannerImagePreview" src="" alt="Pratinjau Banner" class="w-full h-full object-cover hidden" onerror="handlePreviewError()">
                 <span id="bannerEmptyPreview" class="text-xs text-slate-400 italic">Belum ada foto banner yang aktif</span>
               </div>
             </div>
@@ -415,7 +415,7 @@
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Unggah Sampul dari Laptop</label>
-          <input type="file" id="formArticleFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5" onchange="uploadDirectToImgBB(this.files[0], 'formArticleImage', 'articleUploadProgress')">
+          <input type="file" id="formArticleFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5 cursor-pointer" onchange="uploadDirectToImgBB(this.files[0], 'formArticleImage', 'articleUploadProgress')">
           <span id="articleUploadProgress" class="text-[10px] text-slate-400 block mb-1"></span>
           <input type="text" id="formArticleImage" placeholder="Atau tempel URL gambar..." class="w-full p-2.5 rounded-xl border border-slate-200">
         </div>
@@ -445,7 +445,7 @@
       <form onsubmit="savePoster(event)" class="p-6 space-y-4 text-xs">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Unggah Berkas Poster dari Laptop</label>
-          <input type="file" id="formPosterFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5" onchange="uploadDirectToImgBB(this.files[0], 'formPosterImage', 'posterUploadProgress')">
+          <input type="file" id="formPosterFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5 cursor-pointer" onchange="uploadDirectToImgBB(this.files[0], 'formPosterImage', 'posterUploadProgress')">
           <span id="posterUploadProgress" class="text-[10px] text-slate-400 block mb-1"></span>
           <input type="text" id="formPosterImage" required placeholder="Atau masukkan URL / ASI1.jpg..." class="w-full p-2.5 rounded-xl border border-slate-200">
         </div>
@@ -476,7 +476,7 @@
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Unggah Thumbnail dari Laptop</label>
-          <input type="file" id="formAnnouncementFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5" onchange="uploadDirectToImgBB(this.files[0], 'formAnnouncementImage', 'announcementUploadProgress')">
+          <input type="file" id="formAnnouncementFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5 cursor-pointer" onchange="uploadDirectToImgBB(this.files[0], 'formAnnouncementImage', 'announcementUploadProgress')">
           <span id="announcementUploadProgress" class="text-[10px] text-slate-400 block mb-1"></span>
           <input type="text" id="formAnnouncementImage" placeholder="poster.jpg atau URL..." class="w-full p-2.5 rounded-xl border border-slate-200">
         </div>
@@ -548,7 +548,7 @@
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Unggah Pas Foto dari Laptop</label>
-          <input type="file" id="formTeamFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5" onchange="uploadDirectToImgBB(this.files[0], 'formTeamPhoto', 'teamUploadProgress')">
+          <input type="file" id="formTeamFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5 cursor-pointer" onchange="uploadDirectToImgBB(this.files[0], 'formTeamPhoto', 'teamUploadProgress')">
           <span id="teamUploadProgress" class="text-[10px] text-slate-400 block mb-1"></span>
           <input type="text" id="formTeamPhoto" placeholder="tim1.jpg atau URL..." class="w-full p-2.5 rounded-xl border border-slate-200">
         </div>
@@ -645,7 +645,7 @@
 
     // ================= FUNGSI UNIVERSAL: UPLOAD IMGBB DARI LAPTOP =================
     async function uploadDirectToImgBB(file, targetInputId, progressSpanId) {
-      if (!file) return;
+      if (!file) return null;
 
       const progressSpan = document.getElementById(progressSpanId);
       const targetInput = document.getElementById(targetInputId);
@@ -664,21 +664,28 @@
         });
         const result = await res.json();
 
-        if (result.success) {
-          const directUrl = result.data.url;
-          if (targetInput) targetInput.value = directUrl;
+        if (result.success && result.data) {
+          // Ambil direct URL asli gambar
+          const directUrl = result.data.display_url || result.data.url;
+          
+          if (targetInput) {
+            targetInput.value = directUrl;
+          }
+          if (targetInputId === "bannerImageUrlInput") {
+            updateBannerPreviewUI(directUrl);
+          }
           if (progressSpan) {
             progressSpan.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fas fa-check"></i> Foto berhasil terunggah ke Cloud!</span>`;
           }
           showToast("Gambar berhasil diunggah ke cloud!");
           return directUrl;
         } else {
-          throw new Error(result.error?.message || "Gagal mengunggah");
+          throw new Error(result.error?.message || "Gagal mengunggah ke ImgBB");
         }
       } catch (err) {
         console.error("Unggah ImgBB Gagal:", err);
         if (progressSpan) {
-          progressSpan.innerHTML = `<span class="text-rose-500 font-bold"><i class="fas fa-exclamation-triangle"></i> Gagal upload: ${err.message}</span>`;
+          progressSpan.innerHTML = `<span class="text-rose-500 font-bold"><i class="fas fa-exclamation-triangle"></i> Gagal: ${err.message}</span>`;
         }
         alert("Gagal mengunggah gambar: " + err.message);
         return null;
@@ -764,6 +771,16 @@
       } else {
         img.src = "";
         img.classList.add("hidden");
+        empty.classList.remove("hidden");
+      }
+    }
+
+    function handlePreviewError() {
+      const img = document.getElementById("bannerImagePreview");
+      const empty = document.getElementById("bannerEmptyPreview");
+      if (img && empty) {
+        img.classList.add("hidden");
+        empty.textContent = "Format tautan gambar tidak valid";
         empty.classList.remove("hidden");
       }
     }
