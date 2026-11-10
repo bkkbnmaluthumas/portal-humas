@@ -41,9 +41,9 @@
       <div class="flex items-center space-x-4 text-slate-200">
         <span id="liveClock" class="font-mono text-[11px]"><i class="far fa-clock mr-1 text-bkkbn-gold"></i> Memuat waktu...</span>
         <div class="flex items-center space-x-2.5 pl-2 border-l border-blue-800/80">
-          <a href="https://www.facebook.com/Kemendukbangga.BKKBNMalukuUtara" target="_blank" class="hover:text-bkkbn-gold transition-colors" title="Facebook"><i class="fab fa-facebook-f text-xs"></i></a>
-          <a href="https://www.instagram.com/kemendukbangga_bkkbnmalut" target="_blank" class="hover:text-bkkbn-gold transition-colors" title="Instagram"><i class="fab fa-instagram text-xs"></i></a>
-          <a href="https://malut.kemendukbangga.go.id" target="_blank" class="hover:text-bkkbn-gold transition-colors" title="Portal Resmi"><i class="fas fa-globe text-xs"></i></a>
+          <a href="https://www.facebook.com/Kemendukbangga.BKKBNMalukuUtara" target="_blank" rel="noopener noreferrer" class="hover:text-bkkbn-gold transition-colors" title="Facebook"><i class="fab fa-facebook-f text-xs"></i></a>
+          <a href="https://www.instagram.com/kemendukbangga_bkkbnmalut" target="_blank" rel="noopener noreferrer" class="hover:text-bkkbn-gold transition-colors" title="Instagram"><i class="fab fa-instagram text-xs"></i></a>
+          <a href="https://malut.kemendukbangga.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-bkkbn-gold transition-colors" title="Portal Resmi"><i class="fas fa-globe text-xs"></i></a>
         </div>
       </div>
     </div>
@@ -51,11 +51,13 @@
 
   <!-- ================= BANNER UTAMA TERPADU ================= -->
   <header class="relative w-full h-[500px] overflow-hidden shadow-md">
-    <!-- Gambar Latar Belakang Banner -->
+    <!-- Gambar Latar Belakang Banner Utama (Terkoneksi Realtime ke Cloud Firestore) -->
     <img 
+      id="heroBannerImg"
       src="image2.jpg" 
       alt="Banner Humas BKKBN" 
-      class="absolute inset-0 w-full h-full object-cover object-[center_80%]"
+      class="absolute inset-0 w-full h-full object-cover object-[center_80%] transition-opacity duration-500"
+      onerror="this.onerror=null; this.src='image2.jpg';"
     />
     <!-- Lapisan Gelap Pembacaan Teks -->
     <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-900/25 to-slate-950/45"></div>
@@ -87,7 +89,7 @@
 
       <!-- Sisi Kanan: Tombol Kontak Pers -->
       <div class="flex items-center flex-shrink-0">
-        <button onclick="scrollToSection('contactMediaSection')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 text-[11px] font-bold tracking-wide shadow-md transition">
+        <button type="button" onclick="scrollToSection('contactMediaSection')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 text-[11px] font-bold tracking-wide shadow-md transition">
           <i class="fas fa-headset text-[10px]"></i>
           <span>Kontak Pers</span>
         </button>
@@ -119,12 +121,14 @@
           <!-- Tab Navigasi Berita & Artikel -->
           <div class="flex items-center rounded-2xl overflow-hidden border border-sky-500 bg-white shadow-sm p-1">
             <button 
+              type="button"
               id="tabBeritaBtn" 
               onclick="switchTabContent('berita')" 
               class="flex-1 py-3 px-4 text-center text-sm font-bold bg-[#0088CC] text-white rounded-xl shadow transition duration-200">
               Berita Terbaru
             </button>
             <button 
+              type="button"
               id="tabArtikelBtn" 
               onclick="switchTabContent('artikel')" 
               class="flex-1 py-3 px-4 text-center text-sm font-bold text-slate-700 hover:text-sky-600 transition duration-200 rounded-xl">
@@ -164,8 +168,8 @@
               </a>
             </div>
 
-            <!-- Daftar 5 Agenda -->
-            <div class="flex flex-col divide-y divide-slate-100">
+            <!-- Wadah Agenda Cloud Realtime -->
+            <div id="publicAgendasContainer" class="flex flex-col divide-y divide-slate-100">
               <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3.5 group cursor-pointer">
                 <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex flex-col items-center justify-center flex-shrink-0 text-center group-hover:bg-[#0088CC] transition duration-200">
                   <span class="text-[9px] uppercase font-bold text-[#0088CC] group-hover:text-white transition">Nov</span>
@@ -213,40 +217,6 @@
                     <span><i class="far fa-clock text-amber-500 mr-1"></i>13.30 WIT</span>
                     <span>•</span>
                     <span><i class="fas fa-video text-sky-500 mr-1"></i>Zoom & Aula Kantor</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3.5 group cursor-pointer">
-                <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex flex-col items-center justify-center flex-shrink-0 text-center group-hover:bg-[#0088CC] transition duration-200">
-                  <span class="text-[9px] uppercase font-bold text-[#0088CC] group-hover:text-white transition">Nov</span>
-                  <span class="text-sm font-extrabold text-[#004B87] group-hover:text-white transition leading-none">24</span>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-xs font-bold text-slate-800 leading-snug group-hover:text-[#0088CC] transition line-clamp-2">
-                    Talkshow Radio Interaktif: "Rencanakan Masa Depan Generasi Emas Bebas Stunting"
-                  </h4>
-                  <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-1">
-                    <span><i class="far fa-clock text-amber-500 mr-1"></i>10.00 WIT</span>
-                    <span>•</span>
-                    <span><i class="fas fa-broadcast-tower text-indigo-500 mr-1"></i>RRI Ternate</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3.5 group cursor-pointer">
-                <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex flex-col items-center justify-center flex-shrink-0 text-center group-hover:bg-[#0088CC] transition duration-200">
-                  <span class="text-[9px] uppercase font-bold text-[#0088CC] group-hover:text-white transition">Des</span>
-                  <span class="text-sm font-extrabold text-[#004B87] group-hover:text-white transition leading-none">02</span>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-xs font-bold text-slate-800 leading-snug group-hover:text-[#0088CC] transition line-clamp-2">
-                    Rilis Media & Diseminasi Tahunan Kinerja Bangga Kencana Maluku Utara
-                  </h4>
-                  <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-1">
-                    <span><i class="far fa-clock text-amber-500 mr-1"></i>09.00 WIT</span>
-                    <span>•</span>
-                    <span><i class="fas fa-map-marker-alt text-rose-500 mr-1"></i>Ballroom Ternate</span>
                   </div>
                 </div>
               </div>
@@ -501,7 +471,7 @@
               <span class="text-[10px] font-bold tracking-wider text-amber-300 uppercase">Saluran Aspirasi</span>
               <p class="text-xs font-bold mt-0.5">Media Center & Aduan Humas</p>
             </div>
-            <button onclick="openMediaInquiryModal()" class="px-3.5 py-1.5 bg-white text-bkkbn-deep font-bold text-xs rounded-lg hover:bg-amber-300 transition shadow">
+            <button type="button" onclick="openMediaInquiryModal()" class="px-3.5 py-1.5 bg-white text-bkkbn-deep font-bold text-xs rounded-lg hover:bg-amber-300 transition shadow">
               Kontak
             </button>
           </div>
@@ -510,7 +480,7 @@
       </div>
     </section>
 
-   <!-- ================= SECTION: LAYANAN MEDIA & KONTAK ================= -->
+    <!-- ================= SECTION: LAYANAN MEDIA & KONTAK ================= -->
     <section id="contactMediaSection" class="mb-12">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -558,9 +528,9 @@
               Layanan verifikasi kutipan narasumber pimpinan dan konfirmasi peliputan cepat.
             </p>
           </div>
-          <a id="loWhatsAppBtn" href="https://wa.me/6281273365377?text=Halo%20Tim%20Humas%20BKKBN%20Malut" target="_blank" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
+          <a id="loWhatsAppBtn" href="https://wa.me/6281273365377?text=Halo%20Tim%20Humas%20BKKBN%20Malut" target="_blank" rel="noopener noreferrer" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
             <i class="fab fa-whatsapp text-base"></i>
-            <span>Hubungi Media Officer (+62 812-3456-7890)</span>
+            <span>Hubungi Media Officer</span>
           </a>
         </div>
 
@@ -586,7 +556,7 @@
       </div>
     </section>
 
- <!-- ================= SECTION: TIM HUMAS ================= -->
+    <!-- ================= SECTION: TIM HUMAS ================= -->
     <section id="timHumasSection" class="mb-12">
       <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
         
@@ -625,10 +595,10 @@
           <span class="text-xs text-slate-400" id="modalReadTime"><i class="far fa-clock"></i> 3 Menit</span>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="copyCurrentArticleLink()" class="p-2 text-slate-400 hover:text-bkkbn-primary rounded-lg hover:bg-slate-100 text-sm" title="Salin Tautan">
+          <button type="button" onclick="copyCurrentArticleLink()" class="p-2 text-slate-400 hover:text-bkkbn-primary rounded-lg hover:bg-slate-100 text-sm" title="Salin Tautan">
             <i class="fas fa-link"></i>
           </button>
-          <button onclick="closeArticleModal()" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 text-sm">
+          <button type="button" onclick="closeArticleModal()" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 text-sm">
             <i class="fas fa-times text-lg"></i>
           </button>
         </div>
@@ -666,13 +636,13 @@
         <div class="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span class="text-xs font-bold text-slate-700">Bagikan Informasi Ini:</span>
           <div class="flex items-center gap-2">
-            <button onclick="shareToWhatsApp()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+            <button type="button" onclick="shareToWhatsApp()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm">
               <i class="fab fa-whatsapp"></i> WhatsApp
             </button>
-            <button onclick="shareToTwitter()" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+            <button type="button" onclick="shareToTwitter()" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm">
               <i class="fab fa-x-twitter"></i> Bagikan
             </button>
-            <button onclick="copyCurrentArticleLink()" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-1.5">
+            <button type="button" onclick="copyCurrentArticleLink()" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-1.5">
               <i class="fas fa-copy"></i> Salin Link
             </button>
           </div>
@@ -692,7 +662,7 @@
             <p class="text-[11px] text-blue-200">Biro Humas & Hubungan Antar Lembaga</p>
           </div>
         </div>
-        <button onclick="closeMediaInquiryModal()" class="text-white/80 hover:text-white">
+        <button type="button" onclick="closeMediaInquiryModal()" class="text-white/80 hover:text-white">
           <i class="fas fa-times text-lg"></i>
         </button>
       </div>
@@ -758,7 +728,7 @@
       <div class="flex items-center gap-3 pt-1">
         <!-- Instagram Resmi -->
         <a 
-          href="https://www.instagram.com/kemendukbangga_bkkbnmalut?vrfl=MTB1aTF2bzA5bGMxMg%3D%3D" 
+          href="https://www.instagram.com/kemendukbangga_bkkbnmalut" 
           target="_blank" 
           rel="noopener noreferrer" 
           class="w-9 h-9 rounded-full bg-slate-800 hover:bg-pink-600 text-white flex items-center justify-center text-sm transition-all duration-200 hover:scale-110 shadow"
@@ -768,7 +738,7 @@
 
         <!-- Facebook Page Resmi -->
         <a 
-          href="https://www.facebook.com/Kemendukbangga.BKKBNMalukuUtara?rdid=MXXyRKqM9nPfcktY&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1f51AkucQf%2F#" 
+          href="https://www.facebook.com/Kemendukbangga.BKKBNMalukuUtara" 
           target="_blank" 
           rel="noopener noreferrer" 
           class="w-9 h-9 rounded-full bg-slate-800 hover:bg-blue-600 text-white flex items-center justify-center text-sm transition-all duration-200 hover:scale-110 shadow"
@@ -776,7 +746,7 @@
           <i class="fab fa-facebook-f"></i>
         </a>
 
-       <!-- Portal Website Resmi Kemendukbangga -->
+        <!-- Portal Website Resmi Kemendukbangga -->
         <a 
           href="https://malut.kemendukbangga.go.id/search?category_uuid=37c2b970-a525-4884-ace6-8076b478e86b&category_name=Berita%20Terbaru" 
           target="_blank" 

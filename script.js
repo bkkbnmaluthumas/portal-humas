@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initTypewriter();
 
   // Sinkronisasi Cloud Firestore
+  listenCloudBanner();
   listenCloudArticles();
   listenCloudPosters();
   listenCloudSettings();
@@ -130,6 +131,30 @@ document.getElementById("articleModal")?.addEventListener("click", (e) => {
 document.getElementById("mediaInquiryModal")?.addEventListener("click", (e) => {
   if (e.target.id === "mediaInquiryModal") closeMediaInquiryModal();
 });
+
+// ================= FIRESTORE: SINKRONISASI FOTO BANNER =================
+function listenCloudBanner() {
+  if (typeof db === "undefined") return;
+
+  const heroImg = document.getElementById("heroBannerImg");
+  if (!heroImg) return;
+
+  db.collection("settings").doc("banner").onSnapshot(doc => {
+    if (doc.exists) {
+      const data = doc.data();
+      if (data && data.imageUrl && data.imageUrl.trim() !== "") {
+        // Terapkan transisi pergantian gambar halus
+        heroImg.style.opacity = "0.7";
+        setTimeout(() => {
+          heroImg.src = data.imageUrl;
+          heroImg.style.opacity = "1";
+        }, 150);
+      }
+    }
+  }, err => {
+    console.warn("Gagal membaca foto banner cloud:", err);
+  });
+}
 
 // ================= FIRESTORE: SINKRONISASI BERITA & ARTIKEL =================
 function listenCloudArticles() {
@@ -201,7 +226,7 @@ function renderTabContent() {
         <img 
           src="${item.image || 'image1.jpg'}" 
           alt="${item.title}" 
-          class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+          class="w-full h-full object-cover group-hover:scale-105 transition duration-300" 
           onerror="this.onerror=null; this.src='image1.jpg';"
         />
       </div>
