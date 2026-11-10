@@ -237,47 +237,62 @@
           <p class="text-xs text-slate-500">Kelola foto banner utama, narahubung pers, dan formulir terpadu</p>
         </div>
 
-        <!-- 0. KONTROL GANTI FOTO BANNER UTAMA -->
+        <!-- KONTROL UNGGAH FOTO BANNER LANGSUNG DARI LAPTOP VIA IMGBB -->
         <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 text-xs">
           <div class="flex items-center justify-between pb-3 border-b border-slate-100">
             <div>
               <h3 class="font-bold text-[#004B87] text-sm flex items-center gap-2">
                 <i class="fas fa-image text-[#0088CC] text-base"></i> Foto Banner Utama (Hero Banner Beranda)
               </h3>
-              <p class="text-[11px] text-slate-500 mt-0.5">Ubah gambar latar banner atas website secara realtime</p>
+              <p class="text-[11px] text-slate-500 mt-0.5">Unggah berkas foto dari folder laptop mana saja untuk langsung tayang di portal.</p>
             </div>
-            <span class="px-2.5 py-1 rounded-full bg-blue-50 text-bkkbn-deep font-bold text-[10px]">Cloud Sync</span>
+            <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px] flex items-center gap-1">
+              <i class="fas fa-cloud-upload-alt"></i> ImgBB Direct Upload
+            </span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
             <div class="space-y-3">
               <div>
-                <label class="block font-bold text-slate-700 mb-1">URL atau Nama File Foto Banner</label>
+                <label class="block font-bold text-slate-700 mb-1">Pilih File Foto dari Laptop</label>
+                <input 
+                  type="file" 
+                  id="bannerFileInput" 
+                  accept="image/*" 
+                  class="w-full text-xs p-2 rounded-xl border border-slate-200 bg-white file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer"
+                  onchange="previewBannerFile(event)"
+                >
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Atau Gunakan Tautan URL / File Gambar</label>
                 <input 
                   type="text" 
                   id="bannerImageUrlInput" 
-                  placeholder="Contoh: image2.jpg atau https://images.unsplash.com/..." 
-                  class="w-full p-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-bkkbn-primary/20"
+                  placeholder="https://... atau image2.jpg" 
+                  class="w-full p-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-bkkbn-primary/20 text-xs"
                   oninput="updateBannerPreviewUI(this.value)"
                 >
-                <span class="text-[10px] text-slate-400 mt-1 block">
-                  Bisa nama file yang diunggah ke repositori GitHub (misal: <code>image2.jpg</code>) atau URL gambar online langsung.
-                </span>
               </div>
-              <button 
-                type="button" 
-                onclick="saveBannerSettings()" 
-                class="px-5 py-2.5 bg-bkkbn-deep hover:bg-bkkbn-dark text-white font-bold rounded-xl shadow flex items-center gap-2 transition">
-                <i class="fas fa-save text-amber-300"></i> Simpan Foto Banner
-              </button>
+
+              <div class="flex items-center gap-3 pt-1">
+                <button 
+                  type="button" 
+                  id="btnUploadBanner"
+                  onclick="saveBannerDirect()" 
+                  class="px-5 py-2.5 bg-bkkbn-deep hover:bg-bkkbn-dark text-white font-bold rounded-xl shadow flex items-center gap-2 transition duration-200">
+                  <i class="fas fa-cloud-upload-alt text-amber-300"></i> Simpan & Unggah Banner
+                </button>
+                <span id="bannerUploadStatus" class="text-[11px] text-slate-500 font-medium"></span>
+              </div>
             </div>
 
-            <!-- Box Pratinjau Foto Banner -->
+            <!-- Pratinjau Foto Banner -->
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Pratinjau Foto Banner</label>
-              <div class="w-full h-36 rounded-xl border border-slate-200 overflow-hidden bg-slate-50 flex items-center justify-center">
+              <label class="block font-bold text-slate-700 mb-1">Pratinjau Foto Banner Saat Ini</label>
+              <div class="w-full h-40 rounded-xl border border-slate-200 overflow-hidden bg-slate-50 flex items-center justify-center relative">
                 <img id="bannerImagePreview" src="" alt="Pratinjau Banner" class="w-full h-full object-cover hidden">
-                <span id="bannerEmptyPreview" class="text-xs text-slate-400 italic">Belum ada foto banner yang disimpan</span>
+                <span id="bannerEmptyPreview" class="text-xs text-slate-400 italic">Belum ada foto banner yang aktif</span>
               </div>
             </div>
           </div>
@@ -326,7 +341,7 @@
             </div>
           </div>
 
-          <!-- Sekretariat -->
+          <!-- Data Kontak Sekretariat -->
           <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
             <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
               <i class="fas fa-building text-slate-600 text-base"></i> 3. Data Kontak Sekretariat Humas
@@ -399,8 +414,10 @@
           </div>
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">URL / File Gambar Sampul</label>
-          <input type="text" id="formArticleImage" placeholder="image1.jpg atau https://..." class="w-full p-2.5 rounded-xl border border-slate-200">
+          <label class="block font-bold text-slate-700 mb-1">Unggah Sampul dari Laptop</label>
+          <input type="file" id="formArticleFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5" onchange="uploadDirectToImgBB(this.files[0], 'formArticleImage', 'articleUploadProgress')">
+          <span id="articleUploadProgress" class="text-[10px] text-slate-400 block mb-1"></span>
+          <input type="text" id="formArticleImage" placeholder="Atau tempel URL gambar..." class="w-full p-2.5 rounded-xl border border-slate-200">
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Ringkasan / Excerpt</label>
@@ -427,8 +444,10 @@
       </div>
       <form onsubmit="savePoster(event)" class="p-6 space-y-4 text-xs">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Nama File / URL Poster <span class="text-rose-500">*</span></label>
-          <input type="text" id="formPosterImage" required placeholder="ASI1.jpg atau https://..." class="w-full p-2.5 rounded-xl border border-slate-200">
+          <label class="block font-bold text-slate-700 mb-1">Unggah Berkas Poster dari Laptop</label>
+          <input type="file" id="formPosterFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5" onchange="uploadDirectToImgBB(this.files[0], 'formPosterImage', 'posterUploadProgress')">
+          <span id="posterUploadProgress" class="text-[10px] text-slate-400 block mb-1"></span>
+          <input type="text" id="formPosterImage" required placeholder="Atau masukkan URL / ASI1.jpg..." class="w-full p-2.5 rounded-xl border border-slate-200">
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Judul / Caption Poster</label>
@@ -456,8 +475,10 @@
           <input type="text" id="formAnnouncementTitle" required class="w-full p-2.5 rounded-xl border border-slate-200">
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">URL / File Thumbnail</label>
-          <input type="text" id="formAnnouncementImage" placeholder="poster.jpg" class="w-full p-2.5 rounded-xl border border-slate-200">
+          <label class="block font-bold text-slate-700 mb-1">Unggah Thumbnail dari Laptop</label>
+          <input type="file" id="formAnnouncementFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5" onchange="uploadDirectToImgBB(this.files[0], 'formAnnouncementImage', 'announcementUploadProgress')">
+          <span id="announcementUploadProgress" class="text-[10px] text-slate-400 block mb-1"></span>
+          <input type="text" id="formAnnouncementImage" placeholder="poster.jpg atau URL..." class="w-full p-2.5 rounded-xl border border-slate-200">
         </div>
         <div class="pt-3 border-t flex justify-end gap-2">
           <button type="button" onclick="closeAnnouncementEditorModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold">Batal</button>
@@ -526,8 +547,10 @@
           <input type="text" id="formTeamRole" required placeholder="Contoh: Media Officer" class="w-full p-2.5 rounded-xl border border-slate-200">
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">URL / File Foto Profil</label>
-          <input type="text" id="formTeamPhoto" placeholder="tim1.jpg atau https://..." class="w-full p-2.5 rounded-xl border border-slate-200">
+          <label class="block font-bold text-slate-700 mb-1">Unggah Pas Foto dari Laptop</label>
+          <input type="file" id="formTeamFileInput" accept="image/*" class="w-full p-1.5 rounded-xl border border-slate-200 bg-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:bg-sky-50 file:text-sky-700 mb-1.5" onchange="uploadDirectToImgBB(this.files[0], 'formTeamPhoto', 'teamUploadProgress')">
+          <span id="teamUploadProgress" class="text-[10px] text-slate-400 block mb-1"></span>
+          <input type="text" id="formTeamPhoto" placeholder="tim1.jpg atau URL..." class="w-full p-2.5 rounded-xl border border-slate-200">
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Tugas Pokok / Keterangan</label>
@@ -555,8 +578,11 @@
   <!-- Inisialisasi Firebase Proyek bkkbn-malut-humas -->
   <script src="firebase-config.js"></script>
 
-  <!-- JavaScript Logika Firestore Admin -->
+  <!-- JavaScript Logika Firestore Admin & ImgBB API -->
   <script>
+    // KUNCI RESMI IMGBB API HUMAS BKKBN MALUT
+    const IMGBB_API_KEY = "ad265611cf28d93f1fd0815041be91e4";
+
     // Pantau Status Autentikasi Pengguna
     auth.onAuthStateChanged(user => {
       if (user) {
@@ -617,7 +643,49 @@
       listenTeam();
     }
 
-    // ================= FIRESTORE: PENGATURAN FOTO BANNER =================
+    // ================= FUNGSI UNIVERSAL: UPLOAD IMGBB DARI LAPTOP =================
+    async function uploadDirectToImgBB(file, targetInputId, progressSpanId) {
+      if (!file) return;
+
+      const progressSpan = document.getElementById(progressSpanId);
+      const targetInput = document.getElementById(targetInputId);
+      
+      if (progressSpan) {
+        progressSpan.innerHTML = `<span class="text-sky-600 font-bold"><i class="fas fa-spinner fa-spin"></i> Mengunggah berkas (${(file.size/1024).toFixed(1)} KB)...</span>`;
+      }
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+          method: "POST",
+          body: formData
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          const directUrl = result.data.url;
+          if (targetInput) targetInput.value = directUrl;
+          if (progressSpan) {
+            progressSpan.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fas fa-check"></i> Foto berhasil terunggah ke Cloud!</span>`;
+          }
+          showToast("Gambar berhasil diunggah ke cloud!");
+          return directUrl;
+        } else {
+          throw new Error(result.error?.message || "Gagal mengunggah");
+        }
+      } catch (err) {
+        console.error("Unggah ImgBB Gagal:", err);
+        if (progressSpan) {
+          progressSpan.innerHTML = `<span class="text-rose-500 font-bold"><i class="fas fa-exclamation-triangle"></i> Gagal upload: ${err.message}</span>`;
+        }
+        alert("Gagal mengunggah gambar: " + err.message);
+        return null;
+      }
+    }
+
+    // ================= FIRESTORE: PENGATURAN FOTO BANNER UTAMA =================
     function loadBannerSettings() {
       db.collection("settings").doc("banner").get().then(doc => {
         if (doc.exists) {
@@ -627,27 +695,60 @@
             updateBannerPreviewUI(data.imageUrl);
           }
         }
-      }).catch(err => console.error("Gagal memuat setting banner:", err));
+      }).catch(err => console.error("Gagal memuat banner:", err));
     }
 
-    function saveBannerSettings() {
-      const url = document.getElementById("bannerImageUrlInput").value.trim();
-      if (!url) {
-        alert("Masukkan URL atau nama file foto banner terlebih dahulu.");
+    function previewBannerFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        updateBannerPreviewUI(evt.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveBannerDirect() {
+      const fileInput = document.getElementById("bannerFileInput");
+      const urlInput = document.getElementById("bannerImageUrlInput");
+      const statusSpan = document.getElementById("bannerUploadStatus");
+      const btn = document.getElementById("btnUploadBanner");
+
+      let finalImageUrl = urlInput.value.trim();
+
+      // Jika ada file lokal yang dipilih dari folder laptop
+      if (fileInput.files.length > 0) {
+        btn.disabled = true;
+        statusSpan.innerHTML = `<span class="text-sky-600 font-bold"><i class="fas fa-spinner fa-spin"></i> Mengunggah foto dari laptop...</span>`;
+        
+        const uploadedUrl = await uploadDirectToImgBB(fileInput.files[0], "bannerImageUrlInput", "bannerUploadStatus");
+        btn.disabled = false;
+        
+        if (!uploadedUrl) return;
+        finalImageUrl = uploadedUrl;
+      }
+
+      if (!finalImageUrl) {
+        alert("Pilih file foto dari laptop atau masukkan tautan gambar terlebih dahulu.");
         return;
       }
 
+      statusSpan.innerHTML = `<span class="text-amber-600 font-bold"><i class="fas fa-spinner fa-spin"></i> Menyimpan ke Firestore...</span>`;
+
       db.collection("settings").doc("banner").set({
-        imageUrl: url,
+        imageUrl: finalImageUrl,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true })
       .then(() => {
-        updateBannerPreviewUI(url);
-        showToast("Foto banner beranda berhasil diperbarui di Cloud!");
+        updateBannerPreviewUI(finalImageUrl);
+        statusSpan.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fas fa-check-circle"></i> Banner aktif online!</span>`;
+        showToast("Banner beranda berhasil diganti dan aktif!");
+        fileInput.value = "";
       })
       .catch(err => {
         console.error("Gagal menyimpan banner:", err);
-        alert("Terjadi kesalahan saat menyimpan banner.");
+        statusSpan.innerHTML = `<span class="text-rose-500 font-bold">Gagal menyimpan data</span>`;
+        alert("Gagal menyimpan ke Firestore: " + err.message);
       });
     }
 
@@ -697,6 +798,7 @@
     function openArticleFormModal() {
       document.getElementById("articleCrudForm").reset();
       document.getElementById("editArticleDocId").value = "";
+      document.getElementById("articleUploadProgress").innerHTML = "";
       document.getElementById("articleEditorTitle").textContent = "Tambah Berita / Artikel";
       document.getElementById("articleEditorModal").classList.remove("hidden");
     }
@@ -713,6 +815,7 @@
         document.getElementById("formArticleImage").value = d.image || "";
         document.getElementById("formArticleExcerpt").value = d.excerpt || "";
         document.getElementById("formArticleContent").value = d.content || "";
+        document.getElementById("articleUploadProgress").innerHTML = "";
         document.getElementById("articleEditorTitle").textContent = "Edit Berita / Artikel";
         document.getElementById("articleEditorModal").classList.remove("hidden");
       });
@@ -766,7 +869,12 @@
         }).join('');
       });
     }
-    function openPosterFormModal() { document.getElementById("formPosterImage").value = ""; document.getElementById("formPosterTitle").value = ""; document.getElementById("posterEditorModal").classList.remove("hidden"); }
+    function openPosterFormModal() { 
+      document.getElementById("formPosterImage").value = ""; 
+      document.getElementById("formPosterTitle").value = ""; 
+      document.getElementById("posterUploadProgress").innerHTML = "";
+      document.getElementById("posterEditorModal").classList.remove("hidden"); 
+    }
     function closePosterEditorModal() { document.getElementById("posterEditorModal").classList.add("hidden"); }
     function savePoster(e) {
       e.preventDefault();
@@ -799,7 +907,12 @@
         }).join('');
       });
     }
-    function openAnnouncementFormModal() { document.getElementById("formAnnouncementTitle").value = ""; document.getElementById("formAnnouncementImage").value = ""; document.getElementById("announcementEditorModal").classList.remove("hidden"); }
+    function openAnnouncementFormModal() { 
+      document.getElementById("formAnnouncementTitle").value = ""; 
+      document.getElementById("formAnnouncementImage").value = ""; 
+      document.getElementById("announcementUploadProgress").innerHTML = "";
+      document.getElementById("announcementEditorModal").classList.remove("hidden"); 
+    }
     function closeAnnouncementEditorModal() { document.getElementById("announcementEditorModal").classList.add("hidden"); }
     function saveAnnouncement(e) {
       e.preventDefault();
@@ -834,7 +947,14 @@
         }).join('');
       });
     }
-    function openAgendaFormModal() { document.getElementById("formAgendaDay").value = ""; document.getElementById("formAgendaMonth").value = ""; document.getElementById("formAgendaTitle").value = ""; document.getElementById("formAgendaTime").value = ""; document.getElementById("formAgendaLocation").value = ""; document.getElementById("agendaEditorModal").classList.remove("hidden"); }
+    function openAgendaFormModal() { 
+      document.getElementById("formAgendaDay").value = ""; 
+      document.getElementById("formAgendaMonth").value = ""; 
+      document.getElementById("formAgendaTitle").value = ""; 
+      document.getElementById("formAgendaTime").value = ""; 
+      document.getElementById("formAgendaLocation").value = ""; 
+      document.getElementById("agendaEditorModal").classList.remove("hidden"); 
+    }
     function closeAgendaEditorModal() { document.getElementById("agendaEditorModal").classList.add("hidden"); }
     function saveAgenda(e) {
       e.preventDefault();
@@ -910,7 +1030,14 @@
         }).join('');
       });
     }
-    function openTeamFormModal() { document.getElementById("formTeamName").value = ""; document.getElementById("formTeamRole").value = ""; document.getElementById("formTeamPhoto").value = ""; document.getElementById("formTeamDesc").value = ""; document.getElementById("teamEditorModal").classList.remove("hidden"); }
+    function openTeamFormModal() { 
+      document.getElementById("formTeamName").value = ""; 
+      document.getElementById("formTeamRole").value = ""; 
+      document.getElementById("formTeamPhoto").value = ""; 
+      document.getElementById("formTeamDesc").value = ""; 
+      document.getElementById("teamUploadProgress").innerHTML = "";
+      document.getElementById("teamEditorModal").classList.remove("hidden"); 
+    }
     function closeTeamEditorModal() { document.getElementById("teamEditorModal").classList.add("hidden"); }
     function saveTeamMember(e) {
       e.preventDefault();
