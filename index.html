@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Berita & Media Center Humas Perwakilan BKKBN</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Montserrat & Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Proxima Nova Font CDN -->
+  <link rel="stylesheet" href="https://use.typekit.net/af/18029b/00000000000000003b9b185e/27/l?primer=7cdcb44be4c7322979e66c3e7f8006382a3e6197b379f65c484d724a4fb770ee&fvd=n4&v=3">
+
+  <!-- File CSS Eksternal -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-blue-100 selection:text-bkkbn-deep">
+
+  <!-- ================= TOP MICRO BAR ================= -->
+  <div class="bg-bkkbn-deep text-white text-xs px-4 py-1.5 border-b border-blue-900/50">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center space-x-3">
+        <span class="inline-flex items-center gap-1.5 font-medium tracking-wide">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          PORTAL RESMI HUMAS & INFORMASI PUBLIK
+        </span>
+        <span class="hidden md:inline text-blue-300">|</span>
+        <span class="hidden md:inline text-blue-100 opacity-90">Kemendukbangga/BKKBN Perwakilan Provinsi Maluku Utara</span>
+      </div>
+      <div class="flex items-center space-x-4 text-slate-200">
+        <span id="liveClock" class="font-mono text-[11px]"><i class="far fa-clock mr-1 text-bkkbn-gold"></i> Memuat waktu...</span>
+        <div class="flex items-center space-x-2.5 pl-2 border-l border-blue-800/80">
+          <a href="https://www.facebook.com/Kemendukbangga.BKKBNMalukuUtara" target="_blank" class="hover:text-bkkbn-gold transition-colors" title="Facebook"><i class="fab fa-facebook-f text-xs"></i></a>
+          <a href="https://www.instagram.com/kemendukbangga_bkkbnmalut" target="_blank" class="hover:text-bkkbn-gold transition-colors" title="Instagram"><i class="fab fa-instagram text-xs"></i></a>
+          <a href="https://malut.kemendukbangga.go.id" target="_blank" class="hover:text-bkkbn-gold transition-colors" title="Portal Resmi"><i class="fas fa-globe text-xs"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= BANNER UTAMA TERPADU ================= -->
+  <header class="relative w-full h-[500px] overflow-hidden shadow-md">
+    <!-- Gambar Latar Belakang Banner -->
+    <img 
+      src="image2.jpg" 
+      alt="Banner Humas BKKBN" 
+      class="absolute inset-0 w-full h-full object-cover object-[center_80%]"
+    />
+    <!-- Lapisan Gelap Pembacaan Teks -->
+    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-900/25 to-slate-950/45"></div>
+
+    <!-- Bagian Atas: Baris Menu Navigasi & Branding -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <!-- Sisi Kiri: Logo Branding -->
+      <a href="index.html" class="flex items-center gap-2.5 group flex-shrink-0">
+        <img 
+          src="logo.png" 
+          alt="Logo BKKBN" 
+          class="h-8 w-auto max-w-[34px] object-contain flex-shrink-0 group-hover:scale-105 transition-transform duration-200 drop-shadow"
+          onerror="this.onerror=null; this.src='https://placehold.co/34x34/transparent/FFFFFF?text=BKKBN';"
+        />
+        <div>
+          <h1 class="text-xs sm:text-sm font-bold tracking-tight text-sky-400 group-hover:text-sky-300 transition-colors drop-shadow leading-tight">
+            HUMAS KEMENDUKBANGGA/BKKBN
+          </h1>
+          <p class="text-[10px] text-[#E3B341] font-semibold tracking-wide drop-shadow leading-tight">
+            Perwakilan Provinsi Maluku Utara
+          </p>
+        </div>
+      </a>
+
+      <!-- Bagian Tengah: Menu Sejajar -->
+      <nav id="categoryNav" class="hidden md:flex items-center gap-4 lg:gap-6 overflow-x-auto scrollbar-none py-1">
+        <!-- Diisi lewat JavaScript -->
+      </nav>
+
+      <!-- Sisi Kanan: Tombol Kontak Pers -->
+      <div class="flex items-center flex-shrink-0">
+        <button onclick="scrollToSection('contactMediaSection')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 text-[11px] font-bold tracking-wide shadow-md transition">
+          <i class="fas fa-headset text-[10px]"></i>
+          <span>Kontak Pers</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tulisan Tengah Mesin Tik -->
+    <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-10 pointer-events-none">
+      <div class="min-h-[140px] flex items-center justify-center">
+        <h2 id="typewriterText" style="font-family: 'proxima-nova', 'Proxima Nova', sans-serif;" class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-normal text-white drop-shadow-lg tracking-wide leading-relaxed max-w-4xl"></h2>
+        <span class="inline-block w-1 h-8 sm:h-10 md:h-12 bg-amber-400 ml-1 animate-pulse"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Garis Pembatas Banner & Konten -->
+  <div class="w-full h-1.5 bg-gradient-to-r from-bkkbn-deep via-amber-400 to-sky-500 shadow-sm"></div>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="max-w-7xl mx-auto px-4 pt-6 pb-12 flex-1 w-full">
+
+    <!-- ================= SECTION BERITA & PENGUMUMAN ================= -->
+    <section class="mb-12">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- ================= KOLOM KIRI (LEBAR ~67% / 8 KOLOM) ================= -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+          
+          <!-- Tab Navigasi Berita & Artikel -->
+          <div class="flex items-center rounded-2xl overflow-hidden border border-sky-500 bg-white shadow-sm p-1">
+            <button 
+              id="tabBeritaBtn" 
+              onclick="switchTabContent('berita')" 
+              class="flex-1 py-3 px-4 text-center text-sm font-bold bg-[#0088CC] text-white rounded-xl shadow transition duration-200">
+              Berita Terbaru
+            </button>
+            <button 
+              id="tabArtikelBtn" 
+              onclick="switchTabContent('artikel')" 
+              class="flex-1 py-3 px-4 text-center text-sm font-bold text-slate-700 hover:text-sky-600 transition duration-200 rounded-xl">
+              Artikel
+            </button>
+          </div>
+
+          <!-- Header Kategori Dinamis & Tautan Selengkapnya -->
+          <div class="flex items-center justify-between pb-2 border-b-2 border-slate-200">
+            <h2 id="currentTabHeading" class="text-2xl font-extrabold text-[#004B87] font-heading tracking-tight">
+              Berita Terbaru
+            </h2>
+            <a href="kategori.html?cat=berita" class="inline-flex items-center gap-1 text-sm font-bold text-[#0088CC] hover:text-[#004B87] transition">
+              Selengkapnya <i class="fas fa-chevron-right text-xs"></i>
+            </a>
+          </div>
+
+          <!-- Wadah Daftar 4 Item Dinamis -->
+          <div id="tabContentList" class="flex flex-col gap-5">
+            <!-- Diisi otomatis via script.js -->
+          </div>
+
+        </div>
+
+        <!-- ================= KOLOM KANAN (LEBAR ~33% / 4 KOLOM) ================= -->
+        <aside class="lg:col-span-4 flex flex-col gap-6">
+          
+          <!-- 1. WIDGET AGENDA HUMAS -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex items-center justify-between pb-2 border-b-2 border-[#0088CC] mb-5">
+              <h3 class="text-lg font-bold text-[#004B87] font-heading flex items-center gap-2">
+                <i class="far fa-calendar-alt text-[#0088CC] text-base"></i>
+                Agenda HUMAS
+              </h3>
+              <a href="kategori.html?cat=agenda" class="inline-flex items-center gap-1 text-xs font-bold text-[#0088CC] hover:text-[#004B87] transition">
+                Semua <i class="fas fa-chevron-right text-[10px]"></i>
+              </a>
+            </div>
+
+            <!-- Daftar 5 Agenda -->
+            <div class="flex flex-col divide-y divide-slate-100">
+              <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3.5 group cursor-pointer">
+                <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex flex-col items-center justify-center flex-shrink-0 text-center group-hover:bg-[#0088CC] transition duration-200">
+                  <span class="text-[9px] uppercase font-bold text-[#0088CC] group-hover:text-white transition">Nov</span>
+                  <span class="text-sm font-extrabold text-[#004B87] group-hover:text-white transition leading-none">12</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-slate-800 leading-snug group-hover:text-[#0088CC] transition line-clamp-2">
+                    Konferensi Pers: Hasil Evaluasi Semester Penurunan Stunting Maluku Utara
+                  </h4>
+                  <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-1">
+                    <span><i class="far fa-clock text-amber-500 mr-1"></i>09.00 WIT</span>
+                    <span>•</span>
+                    <span><i class="fas fa-map-marker-alt text-rose-500 mr-1"></i>Media Center BKKBN</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3.5 group cursor-pointer">
+                <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex flex-col items-center justify-center flex-shrink-0 text-center group-hover:bg-[#0088CC] transition duration-200">
+                  <span class="text-[9px] uppercase font-bold text-[#0088CC] group-hover:text-white transition">Nov</span>
+                  <span class="text-sm font-extrabold text-[#004B87] group-hover:text-white transition leading-none">16</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-slate-800 leading-snug group-hover:text-[#0088CC] transition line-clamp-2">
+                    Peliputan Lapangan Program GENTING Bersama Tim Media di Halmahera Barat
+                  </h4>
+                  <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-1">
+                    <span><i class="far fa-clock text-amber-500 mr-1"></i>08.30 WIT</span>
+                    <span>•</span>
+                    <span><i class="fas fa-map-marker-alt text-rose-500 mr-1"></i>Kecamatan Jailolo</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3.5 group cursor-pointer">
+                <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex flex-col items-center justify-center flex-shrink-0 text-center group-hover:bg-[#0088CC] transition duration-200">
+                  <span class="text-[9px] uppercase font-bold text-[#0088CC] group-hover:text-white transition">Nov</span>
+                  <span class="text-sm font-extrabold text-[#004B87] group-hover:text-white transition leading-none">19</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-slate-800 leading-snug group-hover:text-[#0088CC] transition line-clamp-2">
+                    Workshop Peningkatan Kapasitas Jurnalistik & Media Sosial Bagi Kader PKB
+                  </h4>
+                  <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-1">
+                    <span><i class="far fa-clock text-amber-500 mr-1"></i>13.30 WIT</span>
+                    <span>•</span>
+                    <span><i class="fas fa-video text-sky-500 mr-1"></i>Zoom & Aula Kantor</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3.5 group cursor-pointer">
+                <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex flex-col items-center justify-center flex-shrink-0 text-center group-hover:bg-[#0088CC] transition duration-200">
+                  <span class="text-[9px] uppercase font-bold text-[#0088CC] group-hover:text-white transition">Nov</span>
+                  <span class="text-sm font-extrabold text-[#004B87] group-hover:text-white transition leading-none">24</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-slate-800 leading-snug group-hover:text-[#0088CC] transition line-clamp-2">
+                    Talkshow Radio Interaktif: "Rencanakan Masa Depan Generasi Emas Bebas Stunting"
+                  </h4>
+                  <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-1">
+                    <span><i class="far fa-clock text-amber-500 mr-1"></i>10.00 WIT</span>
+                    <span>•</span>
+                    <span><i class="fas fa-broadcast-tower text-indigo-500 mr-1"></i>RRI Ternate</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3.5 group cursor-pointer">
+                <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 flex flex-col items-center justify-center flex-shrink-0 text-center group-hover:bg-[#0088CC] transition duration-200">
+                  <span class="text-[9px] uppercase font-bold text-[#0088CC] group-hover:text-white transition">Des</span>
+                  <span class="text-sm font-extrabold text-[#004B87] group-hover:text-white transition leading-none">02</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-slate-800 leading-snug group-hover:text-[#0088CC] transition line-clamp-2">
+                    Rilis Media & Diseminasi Tahunan Kinerja Bangga Kencana Maluku Utara
+                  </h4>
+                  <div class="flex items-center gap-2 text-[10px] text-slate-400 mt-1">
+                    <span><i class="far fa-clock text-amber-500 mr-1"></i>09.00 WIT</span>
+                    <span>•</span>
+                    <span><i class="fas fa-map-marker-alt text-rose-500 mr-1"></i>Ballroom Ternate</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. WIDGET PENGUMUMAN -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex items-center justify-between pb-2 border-b-2 border-amber-400 mb-5">
+              <h3 class="text-lg font-bold text-[#004B87] font-heading">
+                Pengumuman
+              </h3>
+              <a href="kategori.html?cat=pengumuman" class="inline-flex items-center gap-1 text-xs font-bold text-[#0088CC] hover:text-[#004B87] transition">
+                Selengkapnya <i class="fas fa-chevron-right text-[10px]"></i>
+              </a>
+            </div>
+
+            <!-- Daftar Kartu Pengumuman Mini -->
+            <div class="flex flex-col gap-4">
+              <div class="flex items-start gap-3 p-2 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer">
+                <div class="w-16 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
+                  <img src="poster.jpg" alt="Donatur GENTING" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/120x160/004B87/FFFFFF?text=GENTING';" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-slate-800 leading-snug hover:text-[#0088CC] transition line-clamp-3">
+                    Donatur Gerakan Orang Tua Asuh Cegah Stunting (GENTING) Tahun 2026
+                  </h4>
+                  <span class="text-[10px] text-slate-400 block mt-1.5">27 Oktober 2026</span>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3 p-2 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer">
+                <div class="w-16 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
+                  <img src="image1.jpg" alt="Mudik Nyaman" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/120x160/0088CC/FFFFFF?text=MUDIK';" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-slate-800 leading-snug hover:text-[#0088CC] transition line-clamp-3">
+                    MUDIK NYAMAN BERSAMA KELUARGA TAHUN 2026
+                  </h4>
+                  <span class="text-[10px] text-slate-400 block mt-1.5">17 Maret 2026</span>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3 p-2 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer">
+                <div class="w-16 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
+                  <img src="logo.png" alt="Survei Penilaian Integritas" class="w-full h-full object-contain p-1" onerror="this.onerror=null; this.src='https://placehold.co/120x160/EEEEEE/004B87?text=SPI';" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-xs font-bold text-slate-800 leading-snug hover:text-[#0088CC] transition line-clamp-3">
+                    Survei Penilaian Integritas (SPI) Kemendukbangga
+                  </h4>
+                  <span class="text-[10px] text-slate-400 block mt-1.5">12 September 2025</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+    </section>
+    
+    <!-- ================= SECTION: ARTIKEL TERBARU + JADWAL SHOLAT & POSTER/INFOGRAFIS ================= -->
+    <section class="mb-12">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+        
+        <!-- Sisi Kiri (25% / 1 Kolom): Pembungkus Vertikal Berisi 2 Widget -->
+        <div class="lg:col-span-1 flex flex-col gap-5">
+          
+          <!-- 1. Widget Artikel Terbaru -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+            <div class="pb-3 mb-3 border-b border-slate-100 flex items-center justify-between">
+              <h3 class="font-extrabold text-slate-900 font-heading text-base uppercase tracking-wider flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-bkkbn-primary"></span>
+                Artikel Terbaru
+              </h3>
+            </div>
+
+            <!-- Daftar Artikel Terbaru -->
+            <div id="latestArticlesList" class="flex flex-col divide-y divide-slate-100">
+              <div class="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 cursor-pointer group" onclick="location.href='detail.html?id=101'">
+                <img src="image1.jpg" alt="Thumb" class="w-12 h-12 rounded-lg object-cover flex-shrink-0 group-hover:opacity-80 transition" />
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-[11px] font-semibold text-slate-800 line-clamp-2 group-hover:text-bkkbn-primary transition leading-snug">
+                    Akselerasi Penurunan Stunting di Maluku Utara
+                  </h4>
+                  <span class="text-[9px] text-slate-400 block mt-0.5">24 Okt 2024</span>
+                </div>
+              </div>
+
+              <div class="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 cursor-pointer group" onclick="location.href='detail.html?id=102'">
+                <img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=150&q=80" alt="Thumb" class="w-12 h-12 rounded-lg object-cover flex-shrink-0 group-hover:opacity-80 transition" />
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-[11px] font-semibold text-slate-800 line-clamp-2 group-hover:text-bkkbn-primary transition leading-snug">
+                    Pelayanan KB Serentak Sejuta Akseptor (PSA) Sukses
+                  </h4>
+                  <span class="text-[9px] text-slate-400 block mt-0.5">25 Okt 2024</span>
+                </div>
+              </div>
+
+              <div class="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 cursor-pointer group" onclick="location.href='detail.html?id=103'">
+                <img src="https://images.unsplash.com/photo-1516307365426-bea591f05011?auto=format&fit=crop&w=150&q=80" alt="Thumb" class="w-12 h-12 rounded-lg object-cover flex-shrink-0 group-hover:opacity-80 transition" />
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-[11px] font-semibold text-slate-800 line-clamp-2 group-hover:text-bkkbn-primary transition leading-snug">
+                    Wisuda 350 Lansia Tangguh Standard BKL
+                  </h4>
+                  <span class="text-[9px] text-slate-400 block mt-0.5">23 Okt 2024</span>
+                </div>
+              </div>
+
+              <div class="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 cursor-pointer group" onclick="location.href='detail.html?id=104'">
+                <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=150&q=80" alt="Thumb" class="w-12 h-12 rounded-lg object-cover flex-shrink-0 group-hover:opacity-80 transition" />
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-[11px] font-semibold text-slate-800 line-clamp-2 group-hover:text-bkkbn-primary transition leading-snug">
+                    Diseminasi Audit Kasus Stunting Semester II
+                  </h4>
+                  <span class="text-[9px] text-slate-400 block mt-0.5">22 Okt 2024</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Widget Jadwal Sholat -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+            <div class="pb-3 mb-3 border-b border-slate-100 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <h3 class="font-extrabold text-slate-900 font-heading text-xs uppercase tracking-wider">
+                  Jadwal Sholat
+                </h3>
+              </div>
+              <span class="text-[10px] text-slate-500 font-medium">WIT (Malut)</span>
+            </div>
+
+            <!-- Indikator Waktu Sholat Berikutnya -->
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-xl p-3 mb-3 flex items-center justify-between shadow-sm">
+              <div>
+                <span class="text-[9px] uppercase tracking-wider text-emerald-200 font-semibold block">Waktu Berikutnya</span>
+                <span id="nextPrayerName" class="text-xs font-bold font-heading">Subuh</span>
+              </div>
+              <div class="text-right">
+                <span id="nextPrayerCountdown" class="text-sm font-mono font-extrabold text-amber-300">--:--:--</span>
+              </div>
+            </div>
+
+            <!-- Daftar Jam Sholat -->
+            <div class="space-y-1.5 text-xs text-slate-700">
+              <div class="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                <span class="flex items-center gap-2 font-medium"><i class="fas fa-cloud-moon text-indigo-500 text-[11px] w-4"></i> Imsak</span>
+                <span class="font-mono font-bold text-slate-800" id="timeImsak">04:58</span>
+              </div>
+              <div class="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                <span class="flex items-center gap-2 font-medium"><i class="fas fa-sun text-amber-500 text-[11px] w-4"></i> Subuh</span>
+                <span class="font-mono font-bold text-slate-800" id="timeSubuh">05:08</span>
+              </div>
+              <div class="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                <span class="flex items-center gap-2 font-medium"><i class="fas fa-sun text-yellow-500 text-[11px] w-4"></i> Dzuhur</span>
+                <span class="font-mono font-bold text-slate-800" id="timeDzuhur">12:28</span>
+              </div>
+              <div class="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                <span class="flex items-center gap-2 font-medium"><i class="fas fa-cloud-sun text-orange-400 text-[11px] w-4"></i> Ashar</span>
+                <span class="font-mono font-bold text-slate-800" id="timeAshar">15:47</span>
+              </div>
+              <div class="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                <span class="flex items-center gap-2 font-medium"><i class="fas fa-moon text-rose-500 text-[11px] w-4"></i> Maghrib</span>
+                <span class="font-mono font-bold text-slate-800" id="timeMaghrib">18:32</span>
+              </div>
+              <div class="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                <span class="flex items-center gap-2 font-medium"><i class="fas fa-star-and-crescent text-sky-600 text-[11px] w-4"></i> Isya</span>
+                <span class="font-mono font-bold text-slate-800" id="timeIsya">19:42</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Sisi Kanan (75% / 3 Kolom): Wadah Slider Infografis & Poster -->
+        <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex flex-col">
+          
+          <!-- Header Judul INFOGRAFIS & POSTER -->
+          <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100">
+            <h3 class="font-extrabold text-slate-900 font-heading text-base uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-bkkbn-primary"></span>
+              INFOGRAFIS & POSTER
+            </h3>
+            <div class="flex items-center gap-2">
+              <span id="posterCounter" class="text-xs font-mono font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+                1 / 1
+              </span>
+            </div>
+          </div>
+
+          <!-- Area Gambar Poster + Tombol Navigasi Panah -->
+          <div class="relative w-full h-[640px] sm:h-[700px] md:h-[740px] bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200/80 group">
+            <img 
+              id="currentPosterImg" 
+              src="ASI1.jpg" 
+              alt="Infografis Humas BKKBN" 
+              class="w-full h-full object-contain transition-all duration-300 select-none"
+              onerror="this.onerror=null; this.src='https://placehold.co/1200x800/004B87/FFFFFF?text=Infografis+Edukasi';"
+            />
+
+            <button 
+              type="button"
+              onclick="prevPoster()" 
+              aria-label="Poster Sebelumnya"
+              class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-sm flex items-center justify-center shadow-lg transition duration-200 hover:scale-110 active:scale-95 z-20">
+              <i class="fas fa-chevron-left text-sm sm:text-base"></i>
+            </button>
+
+            <button 
+              type="button"
+              onclick="nextPoster()" 
+              aria-label="Poster Selanjutnya"
+              class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-sm flex items-center justify-center shadow-lg transition duration-200 hover:scale-110 active:scale-95 z-20">
+              <i class="fas fa-chevron-right text-sm sm:text-base"></i>
+            </button>
+
+            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950/80 via-slate-950/40 to-transparent p-4 pt-8 text-center pointer-events-none z-10">
+              <p id="posterCaption" class="text-xs sm:text-sm font-semibold text-white drop-shadow leading-relaxed">
+                Edukasi Batasi Waktu Layar Anak - Humas BKKBN Maluku Utara
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= SECTION TRENDING & KABAR KILAT (6 ITEM TERBARU) ================= -->
+    <section class="mb-12">
+      <div class="w-full bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        
+        <!-- Header Judul Rata Tengah -->
+        <div class="flex items-center justify-center pb-4 mb-5 border-b border-slate-100">
+          <h3 class="font-normal text-slate-900 font-heading text-xl sm:text-2xl uppercase tracking-wider flex items-center gap-2.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-bkkbn-primary"></span>
+            Trending & Kabar Kilat
+          </h3>
+        </div>
+
+        <!-- Wadah 6 Item Trending -->
+        <div id="trendingListContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Otomatis diisi 6 item terbaru via script.js -->
+        </div>
+
+        <!-- Quick Banner Layanan Hotline -->
+        <div class="mt-6 pt-4 border-t border-slate-100">
+          <div class="bg-gradient-to-r from-bkkbn-deep to-bkkbn-primary rounded-xl p-3.5 text-white flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-bold tracking-wider text-amber-300 uppercase">Saluran Aspirasi</span>
+              <p class="text-xs font-bold mt-0.5">Media Center & Aduan Humas</p>
+            </div>
+            <button onclick="openMediaInquiryModal()" class="px-3.5 py-1.5 bg-white text-bkkbn-deep font-bold text-xs rounded-lg hover:bg-amber-300 transition shadow">
+              Kontak
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+   <!-- ================= SECTION: LAYANAN MEDIA & KONTAK ================= -->
+    <section id="contactMediaSection" class="mb-12">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Kolom 1: Sekretariat Humas -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider mb-3">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Sekretariat Humas
+            </div>
+            <h3 class="text-lg font-extrabold text-slate-900 font-heading mb-1">
+              Redaksi Berita & Media Hub
+            </h3>
+            <p id="secretariatPic" class="text-xs font-semibold text-slate-600 mb-4">
+              Mr. HUSNI - Tim Kerja HUMAS
+            </p>
+
+            <ul class="space-y-3 text-xs text-slate-600">
+              <li class="flex items-start gap-2.5">
+                <i class="fas fa-map-marker-alt text-sky-600 mt-0.5 flex-shrink-0"></i>
+                <span id="secretariatAddress">Kantor Perwakilan Kemendukbangga/BKKBN Provinsi Maluku Utara</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <i class="fas fa-envelope text-sky-600 flex-shrink-0"></i>
+                <a id="secretariatEmail" href="mailto:humas.malut@bkkbn.go.id" class="hover:text-sky-600 transition">humas.malut@bkkbn.go.id</a>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i class="fas fa-check-circle text-emerald-600 mt-0.5 flex-shrink-0"></i>
+                <span>Layanan Media & Pers Perwakilan Kemendukbangga/BKKBN Malut</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Kolom 2: WhatsApp Media LO -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider mb-3">
+              Respon Cepat Wartawan
+            </div>
+            <h3 class="text-base font-bold text-slate-900 font-heading mb-2">
+              WhatsApp Media Liaison Officer (LO)
+            </h3>
+            <p id="loServiceDesc" class="text-xs text-slate-500 leading-relaxed mb-6">
+              Layanan verifikasi kutipan narasumber pimpinan dan konfirmasi peliputan cepat.
+            </p>
+          </div>
+          <a id="loWhatsAppBtn" href="https://wa.me/6281273365377?text=Halo%20Tim%20Humas%20BKKBN%20Malut" target="_blank" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
+            <i class="fab fa-whatsapp text-base"></i>
+            <span>Hubungi Media Officer (+62 812-3456-7890)</span>
+          </a>
+        </div>
+
+        <!-- Kolom 3: Formulir Pengajuan Liputan -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 text-sky-700 text-[10px] font-bold uppercase tracking-wider mb-3">
+              Formulir Terpadu
+            </div>
+            <h3 id="inquiryFormTitle" class="text-base font-bold text-slate-900 font-heading mb-2">
+              Permohonan Wawancara Pimpinan
+            </h3>
+            <p id="inquiryFormDesc" class="text-xs text-slate-500 leading-relaxed mb-6">
+              Pengajuan surat resmi atau undangan liputan bersama Kepala Perwakilan BKKBN.
+            </p>
+          </div>
+          <a id="openInquiryFormBtn" href="#" class="w-full py-3 px-4 rounded-xl bg-[#0B4A8B] hover:bg-[#083363] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
+            <i class="fas fa-file-signature text-amber-300"></i>
+            <span>Isi Form Pengajuan Liputan</span>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+ <!-- ================= SECTION: TIM HUMAS ================= -->
+    <section id="timHumasSection" class="mb-12">
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+        
+        <!-- Header Judul Section -->
+        <div class="text-center max-w-xl mx-auto mb-8">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-bkkbn-deep text-xs font-bold uppercase tracking-wider mb-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-bkkbn-primary animate-pulse"></span>
+            Struktur Redaksi
+          </div>
+          <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 font-heading tracking-tight">
+            TIM HUMAS
+          </h3>
+          <p class="text-xs text-slate-500 mt-1">
+            Garda terdepan diseminasi informasi dan komunikasi publik Kemendukbangga/BKKBN Perwakilan Maluku Utara
+          </p>
+        </div>
+
+        <!-- GRID ANGGOTA TIM DINAMIS -->
+        <div id="teamMembersContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Diisi otomatis oleh listenCloudTeam() di script.js -->
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MODAL BACA ARTIKEL LENGKAP ================= -->
+  <div id="articleModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-950/70 backdrop-blur-sm p-3 sm:p-6 flex items-center justify-center">
+    <div class="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden my-6 border border-slate-200 transition-all">
+      <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span id="modalCategoryBadge" class="bg-blue-100 text-bkkbn-deep text-xs font-bold px-2.5 py-1 rounded-full">
+            Kategori
+          </span>
+          <span class="text-xs text-slate-400" id="modalReadTime"><i class="far fa-clock"></i> 3 Menit</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="copyCurrentArticleLink()" class="p-2 text-slate-400 hover:text-bkkbn-primary rounded-lg hover:bg-slate-100 text-sm" title="Salin Tautan">
+            <i class="fas fa-link"></i>
+          </button>
+          <button onclick="closeArticleModal()" class="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 text-sm">
+            <i class="fas fa-times text-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-6 md:p-8 max-h-[75vh] overflow-y-auto">
+        <h2 id="modalTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 font-heading leading-tight mb-3">
+          Judul Berita Lengkap
+        </h2>
+
+        <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 pb-4 mb-5 border-b border-slate-100">
+          <span id="modalDate"><i class="far fa-calendar-alt text-bkkbn-primary mr-1"></i> 24 Okt 2026</span>
+          <span id="modalAuthor"><i class="far fa-user text-bkkbn-primary mr-1"></i> Redaksi Humas</span>
+          <span id="modalLocation"><i class="fas fa-map-pin text-rose-500 mr-1"></i> Maluku Utara</span>
+        </div>
+
+        <div class="rounded-xl overflow-hidden mb-6 bg-slate-100 border border-slate-200">
+          <img id="modalImage" src="" alt="Foto Berita" class="w-full max-h-96 object-cover">
+          <div id="modalImageCaption" class="p-2.5 bg-slate-50 text-[11px] text-slate-500 italic text-center border-t border-slate-100">
+            Foto: Dokumentasi Humas Perwakilan BKKBN
+          </div>
+        </div>
+
+        <div id="modalContent" class="text-slate-700 text-sm md:text-base leading-relaxed space-y-4">
+          <!-- Diisi via JavaScript -->
+        </div>
+
+        <div class="mt-8 pt-4 border-t border-slate-100">
+          <span class="text-xs font-semibold text-slate-400 block mb-2">TOPIK TERKAIT:</span>
+          <div id="modalTags" class="flex flex-wrap gap-1.5">
+            <!-- Diisi via JavaScript -->
+          </div>
+        </div>
+
+        <div class="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span class="text-xs font-bold text-slate-700">Bagikan Informasi Ini:</span>
+          <div class="flex items-center gap-2">
+            <button onclick="shareToWhatsApp()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </button>
+            <button onclick="shareToTwitter()" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+              <i class="fab fa-x-twitter"></i> Bagikan
+            </button>
+            <button onclick="copyCurrentArticleLink()" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-1.5">
+              <i class="fas fa-copy"></i> Salin Link
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL PERMOHONAN LIPUTAN PERS ================= -->
+  <div id="mediaInquiryModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-950/70 backdrop-blur-sm p-4 flex items-center justify-center">
+    <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden my-6 border border-slate-200">
+      <div class="bg-bkkbn-deep px-6 py-4 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="fas fa-id-card-alt text-amber-300 text-lg"></i>
+          <div>
+            <h3 class="font-extrabold text-sm font-heading">Formulir Liputan / Wawancara Pers</h3>
+            <p class="text-[11px] text-blue-200">Biro Humas & Hubungan Antar Lembaga</p>
+          </div>
+        </div>
+        <button onclick="closeMediaInquiryModal()" class="text-white/80 hover:text-white">
+          <i class="fas fa-times text-lg"></i>
+        </button>
+      </div>
+
+      <form id="mediaInquiryForm" onsubmit="handleInquirySubmit(event)" class="p-6 space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Nama Jurnalis / Pemohon <span class="text-rose-500">*</span></label>
+          <input type="text" required placeholder="Contoh: Budi Santoso" class="w-full p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-bkkbn-primary/20 focus:border-bkkbn-primary">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Nama Media Massa / Pers <span class="text-rose-500">*</span></label>
+          <input type="text" required placeholder="Contoh: Media Cetak / TV / Online" class="w-full p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-bkkbn-primary/20 focus:border-bkkbn-primary">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp <span class="text-rose-500">*</span></label>
+            <input type="tel" required placeholder="0812xxxxxxx" class="w-full p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-bkkbn-primary/20 focus:border-bkkbn-primary">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Jenis Liputan</label>
+            <select class="w-full p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-bkkbn-primary/20 bg-white">
+              <option>Wawancara Eksklusif Pimpinan</option>
+              <option>Konfirmasi Isu / Siaran Pers</option>
+              <option>Liputan Kegiatan Lapangan</option>
+              <option>Permintaan Data & Infografis</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Topik / Pertanyaan Pokok</label>
+          <textarea rows="3" required placeholder="Tuliskan gambaran ringkas topik wawancara atau materi yang dibutuhkan..." class="w-full p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-bkkbn-primary/20 focus:border-bkkbn-primary"></textarea>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeMediaInquiryModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold">
+            Batal
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-bkkbn-deep hover:bg-bkkbn-dark text-white font-bold flex items-center gap-2">
+            <i class="fas fa-paper-plane text-amber-300"></i>
+            Kirim Permohonan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= TOAST NOTIFICATION BOX ================= -->
+  <div id="toastBox" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700">
+    <i class="fas fa-check-circle text-emerald-400 text-base" id="toastIcon"></i>
+    <span id="toastMessage">Pesan pemberitahuan</span>
+  </div>
+
+  <!-- ================= FOOTER RESMI ================= -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center justify-center gap-3">
+      
+      <!-- Teks Identitas Instansi -->
+      <p class="font-medium text-slate-300">
+        © 2026 HUMAS Kemendukbangga / BKKBN Perwakilan Provinsi Maluku Utara
+      </p>
+
+      <!-- Tautan Saluran Medsos Resmi & Website -->
+      <div class="flex items-center gap-3 pt-1">
+        <!-- Instagram Resmi -->
+        <a 
+          href="https://www.instagram.com/kemendukbangga_bkkbnmalut?vrfl=MTB1aTF2bzA5bGMxMg%3D%3D" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="w-9 h-9 rounded-full bg-slate-800 hover:bg-pink-600 text-white flex items-center justify-center text-sm transition-all duration-200 hover:scale-110 shadow"
+          title="Instagram Resmi @kemendukbangga_bkkbnmalut">
+          <i class="fab fa-instagram"></i>
+        </a>
+
+        <!-- Facebook Page Resmi -->
+        <a 
+          href="https://www.facebook.com/Kemendukbangga.BKKBNMalukuUtara?rdid=MXXyRKqM9nPfcktY&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1f51AkucQf%2F#" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="w-9 h-9 rounded-full bg-slate-800 hover:bg-blue-600 text-white flex items-center justify-center text-sm transition-all duration-200 hover:scale-110 shadow"
+          title="Facebook Page Resmi Humas BKKBN Malut">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+
+       <!-- Portal Website Resmi Kemendukbangga -->
+        <a 
+          href="https://malut.kemendukbangga.go.id/search?category_uuid=37c2b970-a525-4884-ace6-8076b478e86b&category_name=Berita%20Terbaru" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="w-9 h-9 rounded-full bg-slate-800 hover:bg-sky-600 text-white flex items-center justify-center text-sm transition-all duration-200 hover:scale-110 shadow"
+          title="Website Resmi Kemendukbangga Malut">
+          <i class="fas fa-globe"></i>
+        </a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Firebase Compat Core & Firestore SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Konfigurasi Proyek Firebase -->
+  <script src="firebase-config.js"></script>
+
+  <!-- Logika Aplikasi Web -->
+  <script src="script.js"></script>
+</body>
+</html>

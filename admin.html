@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin CMS - Portal Humas BKKBN Malut</title>
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Tailwind CSS & Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bkkbn: {
+              deep: '#0B4A8B',
+              primary: '#005BAC',
+              dark: '#083363',
+              gold: '#F4B400',
+              accent: '#E3B341',
+              surface: '#F8FAFC'
+            }
+          },
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body: ['Poppins', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-body min-h-screen antialiased flex flex-col">
+
+  <!-- ================= LOGIN SCREEN ================= -->
+  <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+      <div class="bg-gradient-to-r from-bkkbn-deep to-bkkbn-primary p-6 text-white text-center">
+        <img src="logo.png" alt="Logo BKKBN" class="h-12 w-auto mx-auto mb-3 drop-shadow" onerror="this.onerror=null; this.src='https://placehold.co/60x60/transparent/FFFFFF?text=BKKBN';">
+        <h2 class="font-heading font-extrabold text-base tracking-wide uppercase">CMS Portal Humas</h2>
+        <p class="text-xs text-blue-200 mt-1">Kemendukbangga / BKKBN Perwakilan Maluku Utara</p>
+      </div>
+
+      <form onsubmit="handleLogin(event)" class="p-6 sm:p-8 space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1.5">Email Pengelola (Firebase Auth)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><i class="fas fa-envelope"></i></span>
+            <input type="email" id="loginEmail" required placeholder="admin@bkkbn.go.id" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-bkkbn-primary/20 focus:border-bkkbn-primary">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1.5">Kata Sandi</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><i class="fas fa-lock"></i></span>
+            <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-bkkbn-primary/20 focus:border-bkkbn-primary">
+          </div>
+        </div>
+
+        <button type="submit" id="loginSubmitBtn" class="w-full py-3 bg-bkkbn-deep hover:bg-bkkbn-dark text-white font-bold rounded-xl shadow-md transition duration-200 flex items-center justify-center gap-2 mt-2">
+          <i class="fas fa-sign-in-alt text-amber-300"></i>
+          <span>Masuk ke Panel Kontrol</span>
+        </button>
+
+        <div class="text-center pt-2">
+          <a href="index.html" class="text-slate-500 hover:text-bkkbn-primary text-[11px] font-medium transition inline-flex items-center gap-1">
+            <i class="fas fa-arrow-left"></i> Kembali ke Tampilan Portal
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= DASHBOARD CMS UTAMA ================= -->
+  <div id="adminDashboard" class="hidden min-h-screen flex flex-col">
+    
+    <!-- Topbar Admin -->
+    <header class="bg-bkkbn-deep text-white px-6 py-3.5 shadow-md flex items-center justify-between sticky top-0 z-30">
+      <div class="flex items-center gap-3">
+        <img src="logo.png" alt="Logo" class="h-8 w-auto" onerror="this.onerror=null; this.src='https://placehold.co/40x40/transparent/FFFFFF?text=KB';">
+        <div>
+          <h1 class="text-sm font-bold font-heading leading-tight">Panel Pengelola Redaksi HUMAS</h1>
+          <span class="text-[10px] text-amber-300 font-medium">Cloud Database Connected (Firestore)</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <a href="index.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+          <i class="fas fa-external-link-alt text-[10px] text-amber-300"></i>
+          <span class="hidden sm:inline">Lihat Web Portal</span>
+        </a>
+        <button onclick="handleLogout()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-1.5 transition shadow">
+          <i class="fas fa-power-off text-xs"></i>
+          <span>Keluar</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Workspace Utama -->
+    <div class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+      
+      <!-- Navigasi Tab CMS -->
+      <div class="flex flex-wrap items-center gap-2 pb-4 mb-6 border-b border-slate-200">
+        <button onclick="switchAdminTab('articles')" id="tabBtnArticles" class="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-[#0088CC] text-white shadow transition">
+          <i class="fas fa-newspaper"></i> Berita & Artikel
+        </button>
+        <button onclick="switchAdminTab('posters')" id="tabBtnPosters" class="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-white text-slate-700 hover:text-[#0088CC] border border-slate-200 transition">
+          <i class="fas fa-images"></i> Infografis & Poster
+        </button>
+        <button onclick="switchAdminTab('announcements')" id="tabBtnAnnouncements" class="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-white text-slate-700 hover:text-[#0088CC] border border-slate-200 transition">
+          <i class="fas fa-bullhorn"></i> Pengumuman
+        </button>
+        <button onclick="switchAdminTab('agendas')" id="tabBtnAgendas" class="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-white text-slate-700 hover:text-[#0088CC] border border-slate-200 transition">
+          <i class="far fa-calendar-check"></i> Agenda Humas
+        </button>
+        <button onclick="switchAdminTab('contact')" id="tabBtnContact" class="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-white text-slate-700 hover:text-[#0088CC] border border-slate-200 transition">
+          <i class="fas fa-headset"></i> Layanan & Kontak Wartawan
+        </button>
+        <button onclick="switchAdminTab('team')" id="tabBtnTeam" class="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-white text-slate-700 hover:text-[#0088CC] border border-slate-200 transition">
+          <i class="fas fa-users"></i> Struktur Redaksi Tim HUMAS
+        </button>
+      </div>
+
+      <!-- ================= TAB 1: BERITA & ARTIKEL ================= -->
+      <div id="sectionTabArticles" class="space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 font-heading">Kelola Berita & Artikel</h2>
+            <p class="text-xs text-slate-500">Tersimpan realtime di cloud Firestore</p>
+          </div>
+          <button onclick="openArticleFormModal()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition">
+            <i class="fas fa-plus"></i> Tambah Berita/Artikel Baru
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3.5">Pratinjau</th>
+                  <th class="p-3.5">Judul Konten</th>
+                  <th class="p-3.5">Kategori</th>
+                  <th class="p-3.5">Penulis</th>
+                  <th class="p-3.5">Tanggal</th>
+                  <th class="p-3.5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adminArticlesTableBody" class="divide-y divide-slate-100 text-slate-700">
+                <tr><td colspan="6" class="p-6 text-center text-slate-400">Memuat data dari cloud...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 2: POSTER ================= -->
+      <div id="sectionTabPosters" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 font-heading">Slider Infografis & Poster</h2>
+            <p class="text-xs text-slate-500">Tersimpan di Firestore koleksi 'posters'</p>
+          </div>
+          <button onclick="openPosterFormModal()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition">
+            <i class="fas fa-plus"></i> Tambah Poster Baru
+          </button>
+        </div>
+        <div id="adminPostersGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+      </div>
+
+      <!-- ================= TAB 3: PENGUMUMAN ================= -->
+      <div id="sectionTabAnnouncements" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 font-heading">Kelola Pengumuman Publik</h2>
+            <p class="text-xs text-slate-500">Informasi edaran dan survei instansi</p>
+          </div>
+          <button onclick="openAnnouncementFormModal()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition">
+            <i class="fas fa-plus"></i> Tambah Pengumuman Baru
+          </button>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3.5">Pratinjau</th>
+                  <th class="p-3.5">Judul Pengumuman</th>
+                  <th class="p-3.5">Tanggal Terbit</th>
+                  <th class="p-3.5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adminAnnouncementsTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 4: AGENDA ================= -->
+      <div id="sectionTabAgendas" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 font-heading">Kelola Agenda Kegiatan HUMAS</h2>
+            <p class="text-xs text-slate-500">Jadwal liputan dan siaran pers</p>
+          </div>
+          <button onclick="openAgendaFormModal()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition">
+            <i class="fas fa-calendar-plus"></i> Tambah Agenda Baru
+          </button>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3.5 text-center">Jadwal</th>
+                  <th class="p-3.5">Nama Kegiatan</th>
+                  <th class="p-3.5">Waktu</th>
+                  <th class="p-3.5">Lokasi</th>
+                  <th class="p-3.5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adminAgendasTableBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 5: LAYANAN & KONTAK WARTAWAN ================= -->
+      <div id="sectionTabContact" class="hidden space-y-6">
+        <div>
+          <h2 class="text-xl font-extrabold text-slate-900 font-heading">Kelola Layanan Hubungan Media & Formulir Terpadu</h2>
+          <p class="text-xs text-slate-500">Disinkronkan langsung ke halaman beranda</p>
+        </div>
+
+        <form id="contactSettingsForm" onsubmit="saveContactSettings(event)" class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6 text-xs">
+          <!-- WhatsApp LO -->
+          <div class="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100 space-y-3">
+            <h3 class="font-bold text-emerald-800 text-sm flex items-center gap-2">
+              <i class="fab fa-whatsapp text-emerald-600 text-base"></i> 1. Respon Cepat Wartawan (Media Liaison Officer)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Nomor WhatsApp LO</label>
+                <input type="text" id="cfgLoPhone" required class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Teks Tombol WhatsApp</label>
+                <input type="text" id="cfgLoButtonText" required class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Deskripsi Layanan LO</label>
+              <textarea id="cfgLoDesc" rows="2" class="w-full p-2.5 rounded-xl border border-slate-200 bg-white"></textarea>
+            </div>
+          </div>
+
+          <!-- Formulir Terpadu -->
+          <div class="p-4 bg-sky-50/50 rounded-xl border border-sky-100 space-y-3">
+            <h3 class="font-bold text-[#004B87] text-sm flex items-center gap-2">
+              <i class="fas fa-file-signature text-[#0088CC] text-base"></i> 2. Formulir Terpadu (Wawancara Pimpinan)
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Judul Formulir</label>
+                <input type="text" id="cfgFormTitle" required class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Tautan Link Form (Google Form / Portal Tiket)</label>
+                <input type="text" id="cfgFormUrl" required class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Deskripsi Pengajuan</label>
+              <textarea id="cfgFormDesc" rows="2" class="w-full p-2.5 rounded-xl border border-slate-200 bg-white"></textarea>
+            </div>
+          </div>
+
+          <!-- Sekretariat -->
+          <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+              <i class="fas fa-building text-slate-600 text-base"></i> 3. Data Kontak Sekretariat Humas
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Nama PIC</label>
+                <input type="text" id="cfgPicName" required class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Email Resmi</label>
+                <input type="email" id="cfgEmail" required class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Alamat Kantor Wilayah</label>
+              <input type="text" id="cfgAddress" required class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="px-6 py-2.5 bg-bkkbn-deep hover:bg-bkkbn-dark text-white font-bold rounded-xl shadow flex items-center gap-2">
+              <i class="fas fa-save text-amber-300"></i> Simpan ke Firestore
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ================= TAB 6: STRUKTUR REDAKSI ================= -->
+      <div id="sectionTabTeam" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-900 font-heading">Struktur Redaksi Tim HUMAS</h2>
+            <p class="text-xs text-slate-500">Kelola foto pengurus, jabatan, dan deskripsi tugas</p>
+          </div>
+          <button onclick="openTeamFormModal()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition">
+            <i class="fas fa-user-plus"></i> Tambah Anggota Tim
+          </button>
+        </div>
+        <div id="adminTeamGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal Edit Artikel -->
+  <div id="articleEditorModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm p-4 flex items-center justify-center overflow-y-auto">
+    <div class="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden my-6 border border-slate-200">
+      <div class="bg-bkkbn-deep px-6 py-4 text-white flex items-center justify-between">
+        <h3 id="articleEditorTitle" class="font-extrabold text-sm font-heading">Form Berita / Artikel</h3>
+        <button type="button" onclick="closeArticleEditorModal()" class="text-white/80 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+      </div>
+      <form id="articleCrudForm" onsubmit="saveArticle(event)" class="p-6 space-y-4 text-xs">
+        <input type="hidden" id="editArticleDocId">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Judul Konten <span class="text-rose-500">*</span></label>
+          <input type="text" id="formArticleTitle" required placeholder="Judul berita..." class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Kategori Tipe</label>
+            <select id="formArticleTag" class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+              <option value="Berita">Berita</option>
+              <option value="Artikel">Artikel</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Nama Penulis</label>
+            <input type="text" id="formArticleAuthor" placeholder="Admin Maluku Utara" class="w-full p-2.5 rounded-xl border border-slate-200">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">URL / File Gambar Sampul</label>
+          <input type="text" id="formArticleImage" placeholder="image1.jpg atau https://..." class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Ringkasan / Excerpt</label>
+          <textarea id="formArticleExcerpt" rows="2" class="w-full p-2.5 rounded-xl border border-slate-200"></textarea>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Isi Artikel Lengkap</label>
+          <textarea id="formArticleContent" rows="4" class="w-full p-2.5 rounded-xl border border-slate-200"></textarea>
+        </div>
+        <div class="pt-3 border-t flex justify-end gap-2">
+          <button type="button" onclick="closeArticleEditorModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-bkkbn-deep text-white font-bold">Simpan ke Cloud</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Edit Poster -->
+  <div id="posterEditorModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm p-4 flex items-center justify-center">
+    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+      <div class="bg-bkkbn-deep px-6 py-4 text-white flex items-center justify-between">
+        <h3 class="font-extrabold text-sm font-heading">Tambah Poster / Infografis</h3>
+        <button type="button" onclick="closePosterEditorModal()" class="text-white/80 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+      </div>
+      <form onsubmit="savePoster(event)" class="p-6 space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nama File / URL Poster <span class="text-rose-500">*</span></label>
+          <input type="text" id="formPosterImage" required placeholder="ASI1.jpg atau https://..." class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Judul / Caption Poster</label>
+          <input type="text" id="formPosterTitle" required class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div class="pt-3 border-t flex justify-end gap-2">
+          <button type="button" onclick="closePosterEditorModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-bkkbn-deep text-white font-bold">Simpan Poster</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Edit Pengumuman -->
+  <div id="announcementEditorModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm p-4 flex items-center justify-center">
+    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+      <div class="bg-bkkbn-deep px-6 py-4 text-white flex items-center justify-between">
+        <h3 id="announcementEditorTitle" class="font-extrabold text-sm font-heading">Pengumuman Publik</h3>
+        <button type="button" onclick="closeAnnouncementEditorModal()" class="text-white/80 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+      </div>
+      <form onsubmit="saveAnnouncement(event)" class="p-6 space-y-4 text-xs">
+        <input type="hidden" id="editAnnouncementDocId">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Judul Pengumuman <span class="text-rose-500">*</span></label>
+          <input type="text" id="formAnnouncementTitle" required class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">URL / File Thumbnail</label>
+          <input type="text" id="formAnnouncementImage" placeholder="poster.jpg" class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div class="pt-3 border-t flex justify-end gap-2">
+          <button type="button" onclick="closeAnnouncementEditorModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-bkkbn-deep text-white font-bold">Simpan Pengumuman</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Edit Agenda -->
+  <div id="agendaEditorModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm p-4 flex items-center justify-center">
+    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+      <div class="bg-bkkbn-deep px-6 py-4 text-white flex items-center justify-between">
+        <h3 id="agendaEditorTitle" class="font-extrabold text-sm font-heading">Agenda Kegiatan</h3>
+        <button type="button" onclick="closeAgendaEditorModal()" class="text-white/80 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+      </div>
+      <form onsubmit="saveAgenda(event)" class="p-6 space-y-4 text-xs">
+        <input type="hidden" id="editAgendaDocId">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Hari (Angka)</label>
+            <input type="text" id="formAgendaDay" required placeholder="12" class="w-full p-2.5 rounded-xl border border-slate-200">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Bulan</label>
+            <input type="text" id="formAgendaMonth" required placeholder="Nov" class="w-full p-2.5 rounded-xl border border-slate-200 uppercase">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nama Kegiatan</label>
+          <input type="text" id="formAgendaTitle" required class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Waktu</label>
+            <input type="text" id="formAgendaTime" placeholder="09.00 WIT" class="w-full p-2.5 rounded-xl border border-slate-200">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Lokasi</label>
+            <input type="text" id="formAgendaLocation" placeholder="Media Center BKKBN" class="w-full p-2.5 rounded-xl border border-slate-200">
+          </div>
+        </div>
+        <div class="pt-3 border-t flex justify-end gap-2">
+          <button type="button" onclick="closeAgendaEditorModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-bkkbn-deep text-white font-bold">Simpan Agenda</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Edit Tim Redaksi -->
+  <div id="teamEditorModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm p-4 flex items-center justify-center">
+    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+      <div class="bg-bkkbn-deep px-6 py-4 text-white flex items-center justify-between">
+        <h3 id="teamEditorTitle" class="font-extrabold text-sm font-heading">Form Anggota Tim HUMAS</h3>
+        <button type="button" onclick="closeTeamEditorModal()" class="text-white/80 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+      </div>
+      <form onsubmit="saveTeamMember(event)" class="p-6 space-y-4 text-xs">
+        <input type="hidden" id="editTeamDocId">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nama Lengkap & Gelar <span class="text-rose-500">*</span></label>
+          <input type="text" id="formTeamName" required placeholder="Contoh: Husni, S.Sos" class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Jabatan / Badge Peran <span class="text-rose-500">*</span></label>
+          <input type="text" id="formTeamRole" required placeholder="Contoh: Media Officer" class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">URL / File Foto Profil</label>
+          <input type="text" id="formTeamPhoto" placeholder="tim1.jpg atau https://..." class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Tugas Pokok / Keterangan</label>
+          <textarea id="formTeamDesc" rows="2" class="w-full p-2.5 rounded-xl border border-slate-200"></textarea>
+        </div>
+        <div class="pt-3 border-t flex justify-end gap-2">
+          <button type="button" onclick="closeTeamEditorModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-bkkbn-deep text-white font-bold">Simpan Anggota</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Box -->
+  <div id="adminToast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700">
+    <i class="fas fa-check-circle text-emerald-400 text-base"></i>
+    <span id="adminToastMsg">Berhasil disimpan</span>
+  </div>
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  
+  <!-- Inisialisasi Firebase Proyek bkkbn-malut-humas -->
+  <script src="firebase-config.js"></script>
+
+  <!-- JavaScript Logika Firestore Admin -->
+  <script>
+    // Pantau Status Autentikasi Pengguna
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("adminDashboard").classList.remove("hidden");
+        loadAllCloudData();
+      } else {
+        document.getElementById("loginScreen").classList.remove("hidden");
+        document.getElementById("adminDashboard").classList.add("hidden");
+      }
+    });
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value.trim();
+      const pass = document.getElementById("loginPassword").value.trim();
+      const btn = document.getElementById("loginSubmitBtn");
+      
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin text-amber-300"></i> Memverifikasi...`;
+
+      auth.signInWithEmailAndPassword(email, pass)
+        .then(() => showToast("Login berhasil ke Firebase Cloud!"))
+        .catch(err => {
+          alert("Login gagal: " + err.message);
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fas fa-sign-in-alt text-amber-300"></i> <span>Masuk ke Panel Kontrol</span>`;
+        });
+    }
+
+    function handleLogout() {
+      auth.signOut().then(() => showToast("Berhasil keluar."));
+    }
+
+    function switchAdminTab(tab) {
+      ['articles', 'posters', 'announcements', 'agendas', 'contact', 'team'].forEach(t => {
+        const sec = document.getElementById("sectionTab" + t.charAt(0).toUpperCase() + t.slice(1));
+        const btn = document.getElementById("tabBtn" + t.charAt(0).toUpperCase() + t.slice(1));
+        if (t === tab) {
+          sec?.classList.remove("hidden");
+          btn?.classList.replace("bg-white", "bg-[#0088CC]");
+          btn?.classList.replace("text-slate-700", "text-white");
+        } else {
+          sec?.classList.add("hidden");
+          btn?.classList.replace("bg-[#0088CC]", "bg-white");
+          btn?.classList.replace("text-white", "text-slate-700");
+        }
+      });
+    }
+
+    function loadAllCloudData() {
+      listenArticles();
+      listenPosters();
+      listenAnnouncements();
+      listenAgendas();
+      loadContactSettings();
+      listenTeam();
+    }
+
+    // ================= FIRESTORE: BERITA & ARTIKEL =================
+    function listenArticles() {
+      db.collection("articles").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+        const tbody = document.getElementById("adminArticlesTableBody");
+        if (snapshot.empty) {
+          tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Belum ada artikel di cloud. Klik "Tambah Baru".</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = snapshot.docs.map(doc => {
+          const item = doc.data();
+          return `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="p-3.5"><img src="${item.image || 'image1.jpg'}" class="w-12 h-10 object-cover rounded-lg border"></td>
+              <td class="p-3.5 font-bold text-slate-800 max-w-xs truncate">${item.title}</td>
+              <td class="p-3.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${item.tag === 'Berita' ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-[#0088CC]'}">${item.tag}</span></td>
+              <td class="p-3.5 text-slate-500">${item.author || '-'}</td>
+              <td class="p-3.5 text-slate-400">${item.date || '-'}</td>
+              <td class="p-3.5 text-center">
+                <button onclick="editArticleModal('${doc.id}')" class="p-1.5 text-sky-600 hover:bg-sky-50 rounded"><i class="fas fa-edit"></i></button>
+                <button onclick="deleteDocItem('articles', '${doc.id}')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded"><i class="fas fa-trash-alt"></i></button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      });
+    }
+
+    function openArticleFormModal() {
+      document.getElementById("articleCrudForm").reset();
+      document.getElementById("editArticleDocId").value = "";
+      document.getElementById("articleEditorTitle").textContent = "Tambah Berita / Artikel";
+      document.getElementById("articleEditorModal").classList.remove("hidden");
+    }
+    function closeArticleEditorModal() { document.getElementById("articleEditorModal").classList.add("hidden"); }
+
+    function editArticleModal(id) {
+      db.collection("articles").doc(id).get().then(doc => {
+        if (!doc.exists) return;
+        const d = doc.data();
+        document.getElementById("editArticleDocId").value = doc.id;
+        document.getElementById("formArticleTitle").value = d.title || "";
+        document.getElementById("formArticleTag").value = d.tag || "Berita";
+        document.getElementById("formArticleAuthor").value = d.author || "";
+        document.getElementById("formArticleImage").value = d.image || "";
+        document.getElementById("formArticleExcerpt").value = d.excerpt || "";
+        document.getElementById("formArticleContent").value = d.content || "";
+        document.getElementById("articleEditorTitle").textContent = "Edit Berita / Artikel";
+        document.getElementById("articleEditorModal").classList.remove("hidden");
+      });
+    }
+
+    function saveArticle(e) {
+      e.preventDefault();
+      const docId = document.getElementById("editArticleDocId").value;
+      const payload = {
+        title: document.getElementById("formArticleTitle").value.trim(),
+        tag: document.getElementById("formArticleTag").value,
+        author: document.getElementById("formArticleAuthor").value.trim() || "Admin Maluku Utara",
+        image: document.getElementById("formArticleImage").value.trim() || "image1.jpg",
+        excerpt: document.getElementById("formArticleExcerpt").value.trim(),
+        content: document.getElementById("formArticleContent").value.trim(),
+        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      if (docId) {
+        db.collection("articles").doc(docId).update(payload).then(() => {
+          closeArticleEditorModal();
+          showToast("Artikel berhasil diperbarui di cloud!");
+        });
+      } else {
+        payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        db.collection("articles").add(payload).then(() => {
+          closeArticleEditorModal();
+          showToast("Artikel baru tersimpan di cloud!");
+        });
+      }
+    }
+
+    // ================= FIRESTORE: POSTER SLIDER =================
+    function listenPosters() {
+      db.collection("posters").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+        const grid = document.getElementById("adminPostersGrid");
+        grid.innerHTML = snapshot.docs.map(doc => {
+          const p = doc.data();
+          return `
+            <div class="bg-white rounded-2xl border p-4 shadow-sm flex flex-col justify-between">
+              <div class="h-48 bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center mb-3">
+                <img src="${p.image}" class="max-h-full max-w-full object-contain">
+              </div>
+              <h4 class="text-xs font-bold text-slate-800 line-clamp-2">${p.title}</h4>
+              <div class="mt-3 pt-2 border-t flex justify-end">
+                <button onclick="deleteDocItem('posters', '${doc.id}')" class="px-2.5 py-1 rounded bg-rose-50 text-rose-600 text-xs font-bold">Hapus</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      });
+    }
+    function openPosterFormModal() { document.getElementById("formPosterImage").value = ""; document.getElementById("formPosterTitle").value = ""; document.getElementById("posterEditorModal").classList.remove("hidden"); }
+    function closePosterEditorModal() { document.getElementById("posterEditorModal").classList.add("hidden"); }
+    function savePoster(e) {
+      e.preventDefault();
+      db.collection("posters").add({
+        image: document.getElementById("formPosterImage").value.trim(),
+        title: document.getElementById("formPosterTitle").value.trim(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        closePosterEditorModal();
+        showToast("Poster berhasil disimpan!");
+      });
+    }
+
+    // ================= FIRESTORE: PENGUMUMAN =================
+    function listenAnnouncements() {
+      db.collection("announcements").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+        const tbody = document.getElementById("adminAnnouncementsTableBody");
+        tbody.innerHTML = snapshot.docs.map(doc => {
+          const a = doc.data();
+          return `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="p-3.5"><img src="${a.image || 'poster.jpg'}" class="w-12 h-10 object-cover rounded-lg border"></td>
+              <td class="p-3.5 font-bold text-slate-800">${a.title}</td>
+              <td class="p-3.5 text-slate-400">${a.date || '-'}</td>
+              <td class="p-3.5 text-center">
+                <button onclick="deleteDocItem('announcements', '${doc.id}')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded"><i class="fas fa-trash-alt"></i></button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      });
+    }
+    function openAnnouncementFormModal() { document.getElementById("formAnnouncementTitle").value = ""; document.getElementById("formAnnouncementImage").value = ""; document.getElementById("announcementEditorModal").classList.remove("hidden"); }
+    function closeAnnouncementEditorModal() { document.getElementById("announcementEditorModal").classList.add("hidden"); }
+    function saveAnnouncement(e) {
+      e.preventDefault();
+      db.collection("announcements").add({
+        title: document.getElementById("formAnnouncementTitle").value.trim(),
+        image: document.getElementById("formAnnouncementImage").value.trim() || "poster.jpg",
+        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        closeAnnouncementEditorModal();
+        showToast("Pengumuman tersimpan!");
+      });
+    }
+
+    // ================= FIRESTORE: AGENDA =================
+    function listenAgendas() {
+      db.collection("agendas").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+        const tbody = document.getElementById("adminAgendasTableBody");
+        tbody.innerHTML = snapshot.docs.map(doc => {
+          const ag = doc.data();
+          return `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="p-3.5 text-center"><span class="px-2.5 py-1 rounded bg-sky-50 text-bkkbn-deep font-extrabold text-xs">${ag.day} ${ag.month}</span></td>
+              <td class="p-3.5 font-bold text-slate-800">${ag.title}</td>
+              <td class="p-3.5 text-slate-500">${ag.time || '-'}</td>
+              <td class="p-3.5 text-slate-500">${ag.location || '-'}</td>
+              <td class="p-3.5 text-center">
+                <button onclick="deleteDocItem('agendas', '${doc.id}')" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded"><i class="fas fa-trash-alt"></i></button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      });
+    }
+    function openAgendaFormModal() { document.getElementById("formAgendaDay").value = ""; document.getElementById("formAgendaMonth").value = ""; document.getElementById("formAgendaTitle").value = ""; document.getElementById("formAgendaTime").value = ""; document.getElementById("formAgendaLocation").value = ""; document.getElementById("agendaEditorModal").classList.remove("hidden"); }
+    function closeAgendaEditorModal() { document.getElementById("agendaEditorModal").classList.add("hidden"); }
+    function saveAgenda(e) {
+      e.preventDefault();
+      db.collection("agendas").add({
+        day: document.getElementById("formAgendaDay").value.trim(),
+        month: document.getElementById("formAgendaMonth").value.trim().toUpperCase(),
+        title: document.getElementById("formAgendaTitle").value.trim(),
+        time: document.getElementById("formAgendaTime").value.trim(),
+        location: document.getElementById("formAgendaLocation").value.trim(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        closeAgendaEditorModal();
+        showToast("Agenda tersimpan!");
+      });
+    }
+
+    // ================= FIRESTORE: KONTAK & LAYANAN =================
+    function loadContactSettings() {
+      db.collection("settings").doc("contact").get().then(doc => {
+        if (!doc.exists) return;
+        const cfg = doc.data();
+        document.getElementById("cfgLoPhone").value = cfg.loPhone || "";
+        document.getElementById("cfgLoButtonText").value = cfg.loButtonText || "";
+        document.getElementById("cfgLoDesc").value = cfg.loDesc || "";
+        document.getElementById("cfgFormTitle").value = cfg.formTitle || "";
+        document.getElementById("cfgFormUrl").value = cfg.formUrl || "";
+        document.getElementById("cfgFormDesc").value = cfg.formDesc || "";
+        document.getElementById("cfgPicName").value = cfg.picName || "";
+        document.getElementById("cfgEmail").value = cfg.email || "";
+        document.getElementById("cfgAddress").value = cfg.address || "";
+      });
+    }
+    function saveContactSettings(e) {
+      e.preventDefault();
+      const cfg = {
+        loPhone: document.getElementById("cfgLoPhone").value.trim(),
+        loButtonText: document.getElementById("cfgLoButtonText").value.trim(),
+        loDesc: document.getElementById("cfgLoDesc").value.trim(),
+        formTitle: document.getElementById("cfgFormTitle").value.trim(),
+        formUrl: document.getElementById("cfgFormUrl").value.trim(),
+        formDesc: document.getElementById("cfgFormDesc").value.trim(),
+        picName: document.getElementById("cfgPicName").value.trim(),
+        email: document.getElementById("cfgEmail").value.trim(),
+        address: document.getElementById("cfgAddress").value.trim(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      db.collection("settings").doc("contact").set(cfg, { merge: true }).then(() => {
+        showToast("Pengaturan Kontak & Layanan tersimpan di Firestore!");
+      });
+    }
+
+    // ================= FIRESTORE: STRUKTUR TIM =================
+    function listenTeam() {
+      db.collection("team").orderBy("order", "asc").onSnapshot(snapshot => {
+        const grid = document.getElementById("adminTeamGrid");
+        grid.innerHTML = snapshot.docs.map(doc => {
+          const m = doc.data();
+          return `
+            <div class="bg-white rounded-2xl border p-4 shadow-sm flex flex-col items-center text-center justify-between">
+              <div class="w-full flex flex-col items-center">
+                <div class="w-20 h-20 rounded-full overflow-hidden bg-slate-100 border-2 border-bkkbn-primary mb-3 flex items-center justify-center">
+                  ${m.photo ? `<img src="${m.photo}" class="w-full h-full object-cover">` : `<span class="text-xs font-bold text-bkkbn-deep">FOTO</span>`}
+                </div>
+                <h4 class="text-xs font-extrabold text-slate-800">${m.name}</h4>
+                <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-[#0088CC]">${m.role}</span>
+                <p class="text-[11px] text-slate-500 mt-2 line-clamp-2">${m.desc || '-'}</p>
+              </div>
+              <div class="mt-4 pt-3 border-t w-full flex justify-center">
+                <button onclick="deleteDocItem('team', '${doc.id}')" class="px-3 py-1 rounded bg-rose-50 text-rose-600 text-xs font-bold">Hapus</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      });
+    }
+    function openTeamFormModal() { document.getElementById("formTeamName").value = ""; document.getElementById("formTeamRole").value = ""; document.getElementById("formTeamPhoto").value = ""; document.getElementById("formTeamDesc").value = ""; document.getElementById("teamEditorModal").classList.remove("hidden"); }
+    function closeTeamEditorModal() { document.getElementById("teamEditorModal").classList.add("hidden"); }
+    function saveTeamMember(e) {
+      e.preventDefault();
+      db.collection("team").add({
+        name: document.getElementById("formTeamName").value.trim(),
+        role: document.getElementById("formTeamRole").value.trim(),
+        photo: document.getElementById("formTeamPhoto").value.trim(),
+        desc: document.getElementById("formTeamDesc").value.trim(),
+        order: Date.now(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        closeTeamEditorModal();
+        showToast("Anggota tim tersimpan di Firestore!");
+      });
+    }
+
+    // Fungsi Hapus Universal
+    function deleteDocItem(col, id) {
+      if (!confirm("Hapus item ini dari Cloud Database?")) return;
+      db.collection(col).doc(id).delete().then(() => showToast("Item berhasil dihapus dari cloud."));
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("adminToast");
+      const m = document.getElementById("adminToastMsg");
+      if (!t || !m) return;
+      m.textContent = msg;
+      t.classList.remove("hidden");
+      setTimeout(() => t.classList.add("hidden"), 3000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Berita - Humas Kemendukbangga/BKKBN Malut</title>
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bkkbn: {
+              deep: '#0B4A8B',
+              primary: '#005BAC',
+              dark: '#083363',
+              surface: '#F8FAFC',
+              gold: '#F4B400',
+              accent: '#E3B341'
+            }
+          },
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body: ['Poppins', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-body min-h-screen antialiased flex flex-col justify-between">
+
+  <!-- Header Navigasi Sederhana -->
+  <header class="bg-bkkbn-deep text-white sticky top-0 z-30 shadow-md">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="inline-flex items-center gap-2 text-white hover:text-amber-300 transition text-xs font-bold font-heading">
+        <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+      </a>
+      <span class="text-[11px] text-blue-200 hidden sm:inline">Portal Berita Humas BKKBN Maluku Utara</span>
+    </div>
+  </header>
+
+  <!-- Kontainer Artikel Utama -->
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full">
+    
+    <!-- Loading State -->
+    <div id="articleLoading" class="py-16 text-center space-y-3">
+      <i class="fas fa-spinner fa-spin text-3xl text-bkkbn-primary"></i>
+      <p class="text-xs text-slate-500 font-medium">Memuat naskah artikel dari Cloud Firestore...</p>
+    </div>
+
+    <!-- Konten Artikel -->
+    <article id="articleDetailCard" class="hidden bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-10 shadow-sm">
+      
+      <!-- Meta & Kategori -->
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <span id="detailTag" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+          Berita
+        </span>
+        <span class="text-slate-300">•</span>
+        <span id="detailDate" class="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+          <i class="far fa-calendar-alt text-bkkbn-primary"></i> -
+        </span>
+        <span class="text-slate-300">•</span>
+        <span id="detailAuthor" class="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+          <i class="far fa-user text-bkkbn-primary"></i> -
+        </span>
+      </div>
+
+      <!-- Judul -->
+      <h1 id="detailTitle" class="text-xl sm:text-3xl font-extrabold text-slate-900 font-heading leading-tight mb-6"></h1>
+
+      <!-- Gambar Sampul -->
+      <div class="w-full rounded-2xl overflow-hidden mb-8 border border-slate-100 bg-slate-100 max-h-[460px] flex items-center justify-center">
+        <img id="detailImage" src="" alt="Sampul Berita" class="w-full h-full object-cover">
+      </div>
+
+      <!-- Isi Artikel Lengkap -->
+      <div id="detailContent" class="text-slate-700 text-sm sm:text-base leading-relaxed space-y-4"></div>
+
+      <!-- Bagikan Berita -->
+      <div class="mt-10 pt-6 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
+        <span class="text-xs font-bold text-slate-700">Bagikan Informasi Ini:</span>
+        <div class="flex items-center gap-2">
+          <button onclick="shareDetailWA()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow transition">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+          </button>
+          <button onclick="copyDetailLink()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold flex items-center gap-1.5 shadow transition">
+            <i class="fas fa-link"></i> Salin Tautan
+          </button>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- Footer Singkat -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+    Kemendukbangga / BKKBN Perwakilan Maluku Utara &copy; 2026
+  </footer>
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <!-- Logika Pengambilan Data Firestore -->
+  <script>
+    let currentArticleData = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const articleId = params.get("id");
+
+      if (!articleId) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      loadDetailFromFirestore(articleId);
+    });
+
+    function loadDetailFromFirestore(id) {
+      db.collection("articles").doc(id).get()
+        .then(doc => {
+          if (!doc.exists) {
+            document.getElementById("articleLoading").innerHTML = `
+              <p class="text-sm font-bold text-rose-600">Artikel tidak ditemukan atau telah dihapus.</p>
+              <a href="index.html" class="inline-block mt-3 text-xs text-bkkbn-primary font-bold underline">Kembali ke Beranda</a>
+            `;
+            return;
+          }
+
+          currentArticleData = doc.data();
+          renderArticleUI(currentArticleData);
+        })
+        .catch(err => {
+          console.error("Gagal membaca Firestore:", err);
+          document.getElementById("articleLoading").innerHTML = `
+            <p class="text-sm font-bold text-rose-600">Gagal mengambil data dari server cloud.</p>
+          `;
+        });
+    }
+
+    function renderArticleUI(data) {
+      document.getElementById("detailTitle").textContent = data.title || "Tanpa Judul";
+      document.getElementById("detailTag").textContent = data.tag || "Berita";
+      document.getElementById("detailDate").innerHTML = `<i class="far fa-calendar-alt text-bkkbn-primary"></i> ${data.date || '-'}`;
+      document.getElementById("detailAuthor").innerHTML = `<i class="far fa-user text-bkkbn-primary"></i> ${data.author || 'Admin Maluku Utara'}`;
+      
+      const imgEl = document.getElementById("detailImage");
+      imgEl.src = data.image || "image1.jpg";
+      imgEl.onerror = () => { imgEl.src = "image1.jpg"; };
+
+      // Format paragraf jika konten masih berupa plain text
+      const contentEl = document.getElementById("detailContent");
+      if (data.content && data.content.includes("<p>")) {
+        contentEl.innerHTML = data.content;
+      } else {
+        const paragraphs = (data.content || data.excerpt || "").split("\n").filter(p => p.trim() !== "");
+        contentEl.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join("");
+      }
+
+      document.getElementById("articleLoading").classList.add("hidden");
+      document.getElementById("articleDetailCard").classList.remove("hidden");
+    }
+
+    function shareDetailWA() {
+      if (!currentArticleData) return;
+      const text = encodeURIComponent(`*${currentArticleData.title}*\nBaca selengkapnya di Portal Humas BKKBN Malut:\n${window.location.href}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function copyDetailLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        alert("Tautan artikel berhasil disalin!");
+      });
+    }
+  </script>
+</body>
+</html>

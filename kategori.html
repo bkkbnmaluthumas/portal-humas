@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indeks Informasi - Humas Kemendukbangga/BKKBN Malut</title>
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Tailwind CSS & Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bkkbn: {
+              deep: '#0B4A8B',
+              primary: '#005BAC',
+              dark: '#083363',
+              gold: '#F4B400',
+              accent: '#E3B341',
+              surface: '#F8FAFC'
+            }
+          },
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body: ['Poppins', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-body min-h-screen antialiased flex flex-col justify-between">
+
+  <!-- Topbar Header -->
+  <header class="bg-bkkbn-deep text-white sticky top-0 z-30 shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="inline-flex items-center gap-2 text-white hover:text-amber-300 transition text-xs font-bold font-heading">
+        <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+      </a>
+      <span id="currentCategoryBadge" class="px-3 py-1 rounded-full bg-white/10 text-amber-300 font-bold text-xs uppercase tracking-wider">
+        Kategori: Semua
+      </span>
+    </div>
+  </header>
+
+  <!-- Konten Arsip -->
+  <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
+    <div class="mb-8">
+      <h1 id="pageHeadingTitle" class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">
+        Arsip Publikasi & Berita
+      </h1>
+      <p id="pageHeadingDesc" class="text-xs text-slate-500 mt-1">
+        Kumpulan publikasi resmi Perwakilan Kemendukbangga/BKKBN Provinsi Maluku Utara
+      </p>
+    </div>
+
+    <!-- Filter Tab Cepat -->
+    <div class="flex flex-wrap items-center gap-2 mb-6 border-b border-slate-200 pb-3">
+      <button onclick="setFilter('semua')" id="btnFilterSemua" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-[#0088CC] text-white">Semua</button>
+      <button onclick="setFilter('berita')" id="btnFilterBerita" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:text-sky-600">Berita</button>
+      <button onclick="setFilter('artikel')" id="btnFilterArtikel" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:text-sky-600">Artikel</button>
+      <button onclick="setFilter('pengumuman')" id="btnFilterPengumuman" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:text-sky-600">Pengumuman</button>
+      <button onclick="setFilter('galeri')" id="btnFilterGaleri" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:text-sky-600">Galeri / Poster</button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingIndicator" class="py-16 text-center text-slate-400 text-xs">
+      <i class="fas fa-spinner fa-spin text-2xl text-bkkbn-primary mb-2"></i>
+      <p>Mengambil data dari Firestore...</p>
+    </div>
+
+    <!-- Grid List Artikel -->
+    <div id="articlesListContainer" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+    <!-- Wadah Kosong -->
+    <div id="emptyNotice" class="hidden p-12 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">
+      Belum ada konten pada kategori ini.
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+    Kemendukbangga / BKKBN Perwakilan Maluku Utara &copy; 2026
+  </footer>
+
+  <!-- Firebase SDK & Config -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    let currentFilter = "semua";
+    let articlesCache = [];
+    let postersCache = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      currentFilter = (params.get("cat") || "semua").toLowerCase();
+      updateFilterButtonsUI();
+      loadCloudData();
+    });
+
+    function setFilter(cat) {
+      currentFilter = cat.toLowerCase();
+      window.history.replaceState(null, '', `kategori.html?cat=${currentFilter}`);
+      updateFilterButtonsUI();
+      renderContent();
+    }
+
+    function updateFilterButtonsUI() {
+      const cats = ['semua', 'berita', 'artikel', 'pengumuman', 'galeri'];
+      cats.forEach(c => {
+        const btn = document.getElementById("btnFilter" + c.charAt(0).toUpperCase() + c.slice(1));
+        if (btn) {
+          if (c === currentFilter) {
+            btn.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-[#0088CC] text-white shadow";
+          } else {
+            btn.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-600 border border-slate-200 hover:text-sky-600";
+          }
+        }
+      });
+
+      const badge = document.getElementById("currentCategoryBadge");
+      if (badge) badge.textContent = `Kategori: ${currentFilter}`;
+    }
+
+    function loadCloudData() {
+      // 1. Ambil data artikel dari Firestore
+      db.collection("articles").orderBy("createdAt", "desc").get()
+        .then(snap => {
+          articlesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          return db.collection("posters").orderBy("createdAt", "desc").get();
+        })
+        .then(snapPosters => {
+          postersCache = snapPosters.docs.map(d => ({ id: d.id, ...d.data() }));
+          document.getElementById("loadingIndicator").classList.add("hidden");
+          renderContent();
+        })
+        .catch(err => {
+          console.error("Gagal memuat arsip:", err);
+          document.getElementById("loadingIndicator").innerHTML = `<p class="text-rose-500">Gagal terhubung ke database cloud.</p>`;
+        });
+    }
+
+    function renderContent() {
+      const container = document.getElementById("articlesListContainer");
+      const emptyBox = document.getElementById("emptyNotice");
+      container.innerHTML = "";
+
+      let items = [];
+
+      if (currentFilter === "galeri") {
+        // Tampilkan Poster/Infografis
+        items = postersCache;
+        if (items.length === 0) {
+          container.classList.add("hidden");
+          emptyBox.classList.remove("hidden");
+          return;
+        }
+
+        emptyBox.classList.add("hidden");
+        container.classList.remove("hidden");
+        container.innerHTML = items.map(p => `
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col justify-between">
+            <div class="h-64 rounded-xl overflow-hidden bg-slate-100 mb-3 flex items-center justify-center">
+              <img src="${p.image}" class="w-full h-full object-contain">
+            </div>
+            <h3 class="text-xs font-bold text-slate-800 line-clamp-2">${p.title}</h3>
+          </div>
+        `).join('');
+        return;
+      }
+
+      // Filter artikel berdasarkan tag/kategori
+      if (currentFilter === "semua") {
+        items = articlesCache;
+      } else {
+        items = articlesCache.filter(a => (a.tag || "").toLowerCase().includes(currentFilter));
+      }
+
+      if (items.length === 0) {
+        container.classList.add("hidden");
+        emptyBox.classList.remove("hidden");
+        return;
+      }
+
+      emptyBox.classList.add("hidden");
+      container.classList.remove("hidden");
+
+      container.innerHTML = items.map(item => `
+        <article class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between cursor-pointer group" onclick="location.href='detail.html?id=${item.id}'">
+          <div>
+            <div class="h-44 bg-slate-100 overflow-hidden">
+              <img src="${item.image || 'image1.jpg'}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.src='image1.jpg';">
+            </div>
+            <div class="p-4">
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${item.tag === 'Berita' ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-[#0088CC]'}">
+                  ${item.tag || 'Berita'}
+                </span>
+                <span class="text-[10px] text-slate-400">${item.date || '-'}</span>
+              </div>
+              <h3 class="font-bold text-slate-900 group-hover:text-sky-600 transition text-sm line-clamp-2 leading-snug">
+                ${item.title}
+              </h3>
+              <p class="text-[11px] text-slate-500 line-clamp-2 mt-2 leading-relaxed">
+                ${item.excerpt || ''}
+              </p>
+            </div>
+          </div>
+          <div class="p-4 pt-2 border-t border-slate-100 text-[10px] text-slate-400">
+            Penulis: <span class="font-medium text-slate-600">${item.author || 'Admin Maluku Utara'}</span>
+          </div>
+        </article>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
