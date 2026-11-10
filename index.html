@@ -52,12 +52,12 @@
   <!-- ================= BANNER UTAMA TERPADU ================= -->
   <header class="relative w-full h-[500px] overflow-hidden shadow-md">
     <!-- Gambar Latar Belakang Banner Utama (Terkoneksi Realtime ke Cloud Firestore) -->
-   <img 
-  id="heroBannerImg"
-  src="image2.jpg" 
-  alt="Banner Humas BKKBN" 
-  class="absolute inset-0 w-full h-full object-cover object-[center_80%] transition-opacity duration-500"
-/>
+    <img 
+      id="heroBannerImg"
+      src="image2.jpg" 
+      alt="Banner Humas BKKBN" 
+      class="absolute inset-0 w-full h-full object-cover object-[center_80%] transition-opacity duration-500"
+    />
     <!-- Lapisan Gelap Pembacaan Teks -->
     <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-900/25 to-slate-950/45"></div>
 
@@ -419,7 +419,7 @@
             />
 
             <button 
-              type="button"
+              type="button" 
               onclick="prevPoster()" 
               aria-label="Poster Sebelumnya"
               class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-sm flex items-center justify-center shadow-lg transition duration-200 hover:scale-110 active:scale-95 z-20">
@@ -427,7 +427,7 @@
             </button>
 
             <button 
-              type="button"
+              type="button" 
               onclick="nextPoster()" 
               aria-label="Poster Selanjutnya"
               class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-sm flex items-center justify-center shadow-lg transition duration-200 hover:scale-110 active:scale-95 z-20">
@@ -759,8 +759,9 @@
     </div>
   </footer>
 
-  <!-- Firebase Compat Core & Firestore SDK -->
+  <!-- Firebase Compat Core, Auth & Firestore SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <!-- Konfigurasi Proyek Firebase -->
