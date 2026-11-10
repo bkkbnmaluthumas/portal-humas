@@ -88,8 +88,9 @@
     Kemendukbangga / BKKBN Perwakilan Maluku Utara &copy; 2026
   </footer>
 
-  <!-- Firebase SDK & Config -->
+  <!-- Firebase SDK (App, Auth & Firestore) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
 
@@ -97,12 +98,23 @@
     let currentFilter = "semua";
     let articlesCache = [];
     let postersCache = [];
+    let announcementsCache = [];
 
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       currentFilter = (params.get("cat") || "semua").toLowerCase();
       updateFilterButtonsUI();
-      loadCloudData();
+
+      // Tunggu inisialisasi objek db dari firebase-config.js
+      const startLoad = () => {
+        if (typeof db !== "undefined") {
+          loadCloudData();
+        } else {
+          setTimeout(startLoad, 100);
+        }
+      };
+
+      startLoad();
     });
 
     function setFilter(cat) {
@@ -130,7 +142,7 @@
     }
 
     function loadCloudData() {
-      // 1. Ambil data artikel dari Firestore
+      // Ambil Berita & Artikel
       db.collection("articles").orderBy("createdAt", "desc").get()
         .then(snap => {
           articlesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -138,12 +150,16 @@
         })
         .then(snapPosters => {
           postersCache = snapPosters.docs.map(d => ({ id: d.id, ...d.data() }));
+          return db.collection("announcements").orderBy("createdAt", "desc").get();
+        })
+        .then(snapAnnounce => {
+          announcementsCache = snapAnnounce.docs.map(d => ({ id: d.id, ...d.data() }));
           document.getElementById("loadingIndicator").classList.add("hidden");
           renderContent();
         })
         .catch(err => {
           console.error("Gagal memuat arsip:", err);
-          document.getElementById("loadingIndicator").innerHTML = `<p class="text-rose-500">Gagal terhubung ke database cloud.</p>`;
+          document.getElementById("loadingIndicator").innerHTML = `<p class="text-rose-500">Gagal terhubung ke database cloud: ${err.message}</p>`;
         });
     }
 
@@ -154,8 +170,8 @@
 
       let items = [];
 
-      if (currentFilter === "galeri") {
-        // Tampilkan Poster/Infografis
+      // 1. Tampilan Khusus Galeri / Poster
+      if (currentFilter === "galeri" || currentFilter === "infografis") {
         items = postersCache;
         if (items.length === 0) {
           container.classList.add("hidden");
@@ -168,7 +184,7 @@
         container.innerHTML = items.map(p => `
           <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col justify-between">
             <div class="h-64 rounded-xl overflow-hidden bg-slate-100 mb-3 flex items-center justify-center">
-              <img src="${p.image}" class="w-full h-full object-contain">
+              <img src="${p.image}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='ASI1.jpg';">
             </div>
             <h3 class="text-xs font-bold text-slate-800 line-clamp-2">${p.title}</h3>
           </div>
@@ -176,7 +192,46 @@
         return;
       }
 
-      // Filter artikel berdasarkan tag/kategori
+      // 2. Tampilan Pengumuman
+      if (currentFilter === "pengumuman") {
+        items = announcementsCache;
+        if (items.length === 0) {
+          // Fallback jika pengumuman ada di artikel
+          items = articlesCache.filter(a => (a.tag || "").toLowerCase().includes("pengumuman"));
+        }
+
+        if (items.length === 0) {
+          container.classList.add("hidden");
+          emptyBox.classList.remove("hidden");
+          return;
+        }
+
+        emptyBox.classList.add("hidden");
+        container.classList.remove("hidden");
+        container.innerHTML = items.map(item => `
+          <article class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between cursor-pointer group" onclick="${item.content ? `location.href='detail.html?id=${item.id}'` : ''}">
+            <div>
+              <div class="h-44 bg-slate-100 overflow-hidden flex items-center justify-center">
+                <img src="${item.image || 'poster.jpg'}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null; this.src='poster.jpg';">
+              </div>
+              <div class="p-4">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                    Pengumuman
+                  </span>
+                  <span class="text-[10px] text-slate-400">${item.date || '-'}</span>
+                </div>
+                <h3 class="font-bold text-slate-900 group-hover:text-sky-600 transition text-sm line-clamp-2 leading-snug">
+                  ${item.title}
+                </h3>
+              </div>
+            </div>
+          </article>
+        `).join('');
+        return;
+      }
+
+      // 3. Tampilan Semua, Berita, & Artikel
       if (currentFilter === "semua") {
         items = articlesCache;
       } else {
