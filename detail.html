@@ -105,9 +105,12 @@
     Kemendukbangga / BKKBN Perwakilan Maluku Utara &copy; 2026
   </footer>
 
-  <!-- Firebase Compat SDK -->
+  <!-- Firebase Compat SDK (App, Auth & Firestore) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  
+  <!-- Inisialisasi Firebase Konfigurasi -->
   <script src="firebase-config.js"></script>
 
   <!-- Logika Pengambilan Data Firestore -->
@@ -123,7 +126,16 @@
         return;
       }
 
-      loadDetailFromFirestore(articleId);
+      // Pastikan variabel db sudah diinisialisasi oleh firebase-config.js
+      const startLoad = () => {
+        if (typeof db !== "undefined") {
+          loadDetailFromFirestore(articleId);
+        } else {
+          setTimeout(startLoad, 100);
+        }
+      };
+
+      startLoad();
     });
 
     function loadDetailFromFirestore(id) {
@@ -143,7 +155,7 @@
         .catch(err => {
           console.error("Gagal membaca Firestore:", err);
           document.getElementById("articleLoading").innerHTML = `
-            <p class="text-sm font-bold text-rose-600">Gagal mengambil data dari server cloud.</p>
+            <p class="text-sm font-bold text-rose-600">Gagal mengambil data dari server cloud: ${err.message}</p>
           `;
         });
     }
@@ -155,8 +167,11 @@
       document.getElementById("detailAuthor").innerHTML = `<i class="far fa-user text-bkkbn-primary"></i> ${data.author || 'Admin Maluku Utara'}`;
       
       const imgEl = document.getElementById("detailImage");
-      imgEl.src = data.image || "image1.jpg";
-      imgEl.onerror = () => { imgEl.src = "image1.jpg"; };
+      if (data.image && data.image.trim() !== "") {
+        imgEl.src = data.image;
+      } else {
+        imgEl.src = "image1.jpg";
+      }
 
       // Format paragraf jika konten masih berupa plain text
       const contentEl = document.getElementById("detailContent");
