@@ -665,8 +665,8 @@
         const result = await res.json();
 
         if (result.success && result.data) {
-          // Ambil direct URL asli gambar
-          const directUrl = result.data.display_url || result.data.url;
+          // Ambil direct static URL murni
+          const directUrl = result.data.display_url || (result.data.image && result.data.image.url) || result.data.url;
           
           if (targetInput) {
             targetInput.value = directUrl;
@@ -723,7 +723,7 @@
 
       let finalImageUrl = urlInput.value.trim();
 
-      // Jika ada file lokal yang dipilih dari folder laptop
+      // Jika ada file lokal yang baru dipilih dari laptop
       if (fileInput.files.length > 0) {
         btn.disabled = true;
         statusSpan.innerHTML = `<span class="text-sky-600 font-bold"><i class="fas fa-spinner fa-spin"></i> Mengunggah foto dari laptop...</span>`;
@@ -750,7 +750,6 @@
         updateBannerPreviewUI(finalImageUrl);
         statusSpan.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fas fa-check-circle"></i> Banner aktif online!</span>`;
         showToast("Banner beranda berhasil diganti dan aktif!");
-        fileInput.value = "";
       })
       .catch(err => {
         console.error("Gagal menyimpan banner:", err);
