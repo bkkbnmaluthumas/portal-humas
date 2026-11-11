@@ -6,21 +6,23 @@
   <title>Detail Berita - Humas Kemendukbangga/BKKBN Malut</title>
   <link rel="icon" type="image/png" href="logo.png">
 
-  <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
+  <!-- Open Graph / WhatsApp / Facebook Preview Tags (Wajib Statis Valid) -->
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Portal Humas Kemendukbangga/BKKBN Maluku Utara">
-  <meta property="og:title" id="ogTitle" content="Detail Berita - Humas Kemendukbangga/BKKBN Malut">
-  <meta property="og:description" id="ogDesc" content="Pusat informasi publik dan siaran pers resmi BKKBN Perwakilan Maluku Utara.">
-  <meta property="og:image" id="ogImage" content="https://bkkbnmaluthumas.github.io/portal-humas/image1.jpg">
+  <meta property="og:title" id="ogTitle" content="Portal Berita Humas BKKBN Maluku Utara">
+  <meta property="og:description" id="ogDesc" content="Pusat rilis berita resmi, edukasi kependudukan, dan informasi program Bangga Kencana Perwakilan BKKBN Maluku Utara.">
+  <meta property="og:image" id="ogImage" content="https://bkkbnmaluthumas.github.io/portal-humas/image2.jpg">
+  <meta property="og:image:secure_url" id="ogImageSecure" content="https://bkkbnmaluthumas.github.io/portal-humas/image2.jpg">
+  <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" id="ogUrl" content="https://bkkbnmaluthumas.github.io/portal-humas/">
 
   <!-- Twitter Card Tags -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" id="twTitle" content="Detail Berita - Humas Kemendukbangga/BKKBN Malut">
-  <meta name="twitter:description" id="twDesc" content="Pusat informasi publik dan siaran pers resmi BKKBN Perwakilan Maluku Utara.">
-  <meta name="twitter:image" id="twImage" content="https://bkkbnmaluthumas.github.io/portal-humas/image1.jpg">
+  <meta name="twitter:title" id="twTitle" content="Portal Berita Humas BKKBN Maluku Utara">
+  <meta name="twitter:description" id="twDesc" content="Pusat rilis berita resmi, edukasi kependudukan, dan informasi program Bangga Kencana Perwakilan BKKBN Maluku Utara.">
+  <meta name="twitter:image" id="twImage" content="https://bkkbnmaluthumas.github.io/portal-humas/image2.jpg">
 
   <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -142,7 +144,6 @@
         return;
       }
 
-      // Pastikan variabel db sudah diinisialisasi oleh firebase-config.js
       const startLoad = () => {
         if (typeof db !== "undefined") {
           loadDetailFromFirestore(articleId);
@@ -189,28 +190,29 @@
       let coverImage = data.image && data.image.trim() !== "" ? data.image.trim() : "image1.jpg";
       imgEl.src = coverImage;
 
-      // ================= SINKRONISASI META CARD PREVIEW (OG / WHATSAPP) =================
+      // ================= SINKRONISASI META CARD PREVIEW =================
       const fullPageTitle = `${title} - Humas BKKBN Malut`;
       document.title = fullPageTitle;
 
-      // Konversi tautan lokal menjadi URL penuh https://
-      let fullCoverUrl = coverImage;
-      if (!coverImage.startsWith("http") && !coverImage.startsWith("data:")) {
+      // Tentukan URL publik absolut yang ramah bot crawler
+      let fullCoverUrl = "https://bkkbnmaluthumas.github.io/portal-humas/image2.jpg";
+      if (coverImage.startsWith("http://") || coverImage.startsWith("https://")) {
+        fullCoverUrl = coverImage;
+      } else if (!coverImage.startsWith("data:")) {
         fullCoverUrl = `https://bkkbnmaluthumas.github.io/portal-humas/${coverImage}`;
       }
 
-      // Update Open Graph Tags
       document.getElementById("ogTitle")?.setAttribute("content", fullPageTitle);
       document.getElementById("ogDesc")?.setAttribute("content", excerpt);
       document.getElementById("ogImage")?.setAttribute("content", fullCoverUrl);
+      document.getElementById("ogImageSecure")?.setAttribute("content", fullCoverUrl);
       document.getElementById("ogUrl")?.setAttribute("content", window.location.href);
 
-      // Update Twitter Card Tags
       document.getElementById("twTitle")?.setAttribute("content", fullPageTitle);
       document.getElementById("twDesc")?.setAttribute("content", excerpt);
       document.getElementById("twImage")?.setAttribute("content", fullCoverUrl);
 
-      // Format paragraf konten naskah
+      // Render naskah artikel
       const contentEl = document.getElementById("detailContent");
       if (data.content && data.content.includes("<p>")) {
         contentEl.innerHTML = data.content;
@@ -227,7 +229,7 @@
       if (!currentArticleData) return;
       const title = currentArticleData.title || "Berita Humas BKKBN Malut";
       const targetUrl = window.location.href;
-      // Format pesan WhatsApp yang ramah perayap tautan
+      // Berikan baris terpisah agar peninjau link WhatsApp langsung mengenali URL
       const text = encodeURIComponent(`*${title}*\n\n${targetUrl}`);
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     }
