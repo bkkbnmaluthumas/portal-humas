@@ -6,6 +6,22 @@
   <title>Detail Berita - Humas Kemendukbangga/BKKBN Malut</title>
   <link rel="icon" type="image/png" href="logo.png">
 
+  <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Portal Humas Kemendukbangga/BKKBN Maluku Utara">
+  <meta property="og:title" id="ogTitle" content="Detail Berita - Humas Kemendukbangga/BKKBN Malut">
+  <meta property="og:description" id="ogDesc" content="Pusat informasi publik dan siaran pers resmi BKKBN Perwakilan Maluku Utara.">
+  <meta property="og:image" id="ogImage" content="https://bkkbnmaluthumas.github.io/portal-humas/image1.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" id="ogUrl" content="https://bkkbnmaluthumas.github.io/portal-humas/">
+
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="twTitle" content="Detail Berita - Humas Kemendukbangga/BKKBN Malut">
+  <meta name="twitter:description" id="twDesc" content="Pusat informasi publik dan siaran pers resmi BKKBN Perwakilan Maluku Utara.">
+  <meta name="twitter:image" id="twImage" content="https://bkkbnmaluthumas.github.io/portal-humas/image1.jpg">
+
   <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -113,7 +129,7 @@
   <!-- Inisialisasi Firebase Konfigurasi -->
   <script src="firebase-config.js"></script>
 
-  <!-- Logika Pengambilan Data Firestore -->
+  <!-- Logika Pengambilan Data Firestore & Meta Card Synchronization -->
   <script>
     let currentArticleData = null;
 
@@ -161,24 +177,45 @@
     }
 
     function renderArticleUI(data) {
-      document.getElementById("detailTitle").textContent = data.title || "Tanpa Judul";
+      const title = data.title || "Tanpa Judul";
+      const excerpt = data.excerpt || "Baca informasi publik selengkapnya di Portal Humas BKKBN Maluku Utara.";
+      
+      document.getElementById("detailTitle").textContent = title;
       document.getElementById("detailTag").textContent = data.tag || "Berita";
       document.getElementById("detailDate").innerHTML = `<i class="far fa-calendar-alt text-bkkbn-primary"></i> ${data.date || '-'}`;
       document.getElementById("detailAuthor").innerHTML = `<i class="far fa-user text-bkkbn-primary"></i> ${data.author || 'Admin Maluku Utara'}`;
       
       const imgEl = document.getElementById("detailImage");
-      if (data.image && data.image.trim() !== "") {
-        imgEl.src = data.image;
-      } else {
-        imgEl.src = "image1.jpg";
+      let coverImage = data.image && data.image.trim() !== "" ? data.image.trim() : "image1.jpg";
+      imgEl.src = coverImage;
+
+      // ================= SINKRONISASI META CARD PREVIEW (OG / WHATSAPP) =================
+      const fullPageTitle = `${title} - Humas BKKBN Malut`;
+      document.title = fullPageTitle;
+
+      // Konversi tautan lokal menjadi URL penuh https://
+      let fullCoverUrl = coverImage;
+      if (!coverImage.startsWith("http") && !coverImage.startsWith("data:")) {
+        fullCoverUrl = `https://bkkbnmaluthumas.github.io/portal-humas/${coverImage}`;
       }
 
-      // Format paragraf jika konten masih berupa plain text
+      // Update Open Graph Tags
+      document.getElementById("ogTitle")?.setAttribute("content", fullPageTitle);
+      document.getElementById("ogDesc")?.setAttribute("content", excerpt);
+      document.getElementById("ogImage")?.setAttribute("content", fullCoverUrl);
+      document.getElementById("ogUrl")?.setAttribute("content", window.location.href);
+
+      // Update Twitter Card Tags
+      document.getElementById("twTitle")?.setAttribute("content", fullPageTitle);
+      document.getElementById("twDesc")?.setAttribute("content", excerpt);
+      document.getElementById("twImage")?.setAttribute("content", fullCoverUrl);
+
+      // Format paragraf konten naskah
       const contentEl = document.getElementById("detailContent");
       if (data.content && data.content.includes("<p>")) {
         contentEl.innerHTML = data.content;
       } else {
-        const paragraphs = (data.content || data.excerpt || "").split("\n").filter(p => p.trim() !== "");
+        const paragraphs = (data.content || excerpt).split("\n").filter(p => p.trim() !== "");
         contentEl.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join("");
       }
 
@@ -188,7 +225,10 @@
 
     function shareDetailWA() {
       if (!currentArticleData) return;
-      const text = encodeURIComponent(`*${currentArticleData.title}*\nBaca selengkapnya di Portal Humas BKKBN Malut:\n${window.location.href}`);
+      const title = currentArticleData.title || "Berita Humas BKKBN Malut";
+      const targetUrl = window.location.href;
+      // Format pesan WhatsApp yang ramah perayap tautan
+      const text = encodeURIComponent(`*${title}*\n\n${targetUrl}`);
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     }
 
