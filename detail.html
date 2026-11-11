@@ -225,17 +225,26 @@
       document.getElementById("articleDetailCard").classList.remove("hidden");
     }
 
+   function getShareWorkerUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const articleId = params.get("id");
+      // MASUKKAN ALAMAT URL WORKER ANDA DI SINI:
+      const workerDomain = "https://bkkbn-share.<nama-subdomain>.workers.dev";
+      return `${workerDomain}?id=${articleId}`;
+    }
+
     function shareDetailWA() {
       if (!currentArticleData) return;
       const title = currentArticleData.title || "Berita Humas BKKBN Malut";
-      const targetUrl = window.location.href;
-      // Berikan baris terpisah agar peninjau link WhatsApp langsung mengenali URL
-      const text = encodeURIComponent(`*${title}*\n\n${targetUrl}`);
+      const shareUrl = getShareWorkerUrl();
+      
+      const text = encodeURIComponent(`*${title}*\n\n${shareUrl}`);
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     }
 
     function copyDetailLink() {
-      navigator.clipboard.writeText(window.location.href).then(() => {
+      const shareUrl = getShareWorkerUrl();
+      navigator.clipboard.writeText(shareUrl).then(() => {
         alert("Tautan artikel berhasil disalin!");
       });
     }
