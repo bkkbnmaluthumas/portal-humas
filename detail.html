@@ -6,12 +6,12 @@
   <title>Detail Berita - Humas Kemendukbangga/BKKBN Malut</title>
   <link rel="icon" type="image/png" href="logo.png">
 
-  <!-- Open Graph / Meta Fallback -->
+  <!-- Open Graph Statis Standar Portal -->
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Portal Humas Kemendukbangga/BKKBN Maluku Utara">
-  <meta property="og:title" id="ogTitle" content="Detail Berita - Humas Kemendukbangga/BKKBN Malut">
-  <meta property="og:description" id="ogDesc" content="Pusat informasi publik dan siaran pers resmi BKKBN Perwakilan Maluku Utara.">
-  <meta property="og:image" id="ogImage" content="https://bkkbnmaluthumas.github.io/portal-humas/image2.jpg">
+  <meta property="og:title" content="Detail Berita - Humas Kemendukbangga/BKKBN Malut">
+  <meta property="og:description" content="Pusat informasi publik dan siaran pers resmi BKKBN Perwakilan Maluku Utara.">
+  <meta property="og:image" content="https://bkkbnmaluthumas.github.io/portal-humas/image2.jpg">
 
   <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -43,7 +43,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-body min-h-screen antialiased flex flex-col justify-between">
 
-  <!-- Header Navigasi Sederhana -->
+  <!-- Header Navigasi -->
   <header class="bg-bkkbn-deep text-white sticky top-0 z-30 shadow-md">
     <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="index.html" class="inline-flex items-center gap-2 text-white hover:text-amber-300 transition text-xs font-bold font-heading">
@@ -59,7 +59,7 @@
     <!-- Loading State -->
     <div id="articleLoading" class="py-16 text-center space-y-3">
       <i class="fas fa-spinner fa-spin text-3xl text-bkkbn-primary"></i>
-      <p class="text-xs text-slate-500 font-medium">Memuat naskah artikel dari Cloud Firestore...</p>
+      <p class="text-xs text-slate-500 font-medium">Memuat naskah artikel...</p>
     </div>
 
     <!-- Konten Artikel -->
@@ -120,10 +120,9 @@
   <!-- Inisialisasi Firebase Konfigurasi -->
   <script src="firebase-config.js"></script>
 
-  <!-- Logika Pengambilan Data Firestore & Auto-Share Link -->
+  <!-- Skrip Pengambilan Data Firestore & Berbagi Link Langsung -->
   <script>
     let currentArticleData = null;
-    const WORKER_SHARE_BASE = "https://icy-mud-246fbkkbn-share.bkkbnmaluthumas.workers.dev";
 
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
@@ -182,7 +181,7 @@
 
       document.title = `${title} - Humas BKKBN Malut`;
 
-      // Format paragraf naskah
+      // Render naskah artikel
       const contentEl = document.getElementById("detailContent");
       if (data.content && data.content.includes("<p>")) {
         contentEl.innerHTML = data.content;
@@ -195,27 +194,20 @@
       document.getElementById("articleDetailCard").classList.remove("hidden");
     }
 
-    // Fungsi otomatis membuat URL berbagi yang memunculkan foto di WhatsApp
-    function getGeneratedShareUrl() {
-      const params = new URLSearchParams(window.location.search);
-      const articleId = params.get("id");
-      return `${WORKER_SHARE_BASE}/?id=${articleId}`;
-    }
-
+    // Bagikan langsung menggunakan URL asli browser GitHub Pages
     function shareDetailWA() {
       if (!currentArticleData) return;
       const title = currentArticleData.title || "Berita Humas BKKBN Malut";
-      const shareUrl = getGeneratedShareUrl();
+      const currentUrl = window.location.href;
       
-      // Susun pesan WhatsApp dengan URL terpisah agar preview langsung muncul
-      const text = encodeURIComponent(`*${title}*\n\n${shareUrl}`);
+      const text = encodeURIComponent(`*${title}*\n\n${currentUrl}`);
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     }
 
     function copyDetailLink() {
-      const shareUrl = getGeneratedShareUrl();
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        alert("Tautan berita berhasil disalin! Anda tinggal tempel (paste) di WhatsApp.");
+      const currentUrl = window.location.href;
+      navigator.clipboard.writeText(currentUrl).then(() => {
+        alert("Tautan artikel berhasil disalin!");
       });
     }
   </script>
