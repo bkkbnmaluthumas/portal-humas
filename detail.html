@@ -6,23 +6,12 @@
   <title>Detail Berita - Humas Kemendukbangga/BKKBN Malut</title>
   <link rel="icon" type="image/png" href="logo.png">
 
-  <!-- Open Graph / WhatsApp / Facebook Preview Tags (Wajib Statis Valid) -->
+  <!-- Open Graph / Meta Fallback -->
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Portal Humas Kemendukbangga/BKKBN Maluku Utara">
-  <meta property="og:title" id="ogTitle" content="Portal Berita Humas BKKBN Maluku Utara">
-  <meta property="og:description" id="ogDesc" content="Pusat rilis berita resmi, edukasi kependudukan, dan informasi program Bangga Kencana Perwakilan BKKBN Maluku Utara.">
+  <meta property="og:title" id="ogTitle" content="Detail Berita - Humas Kemendukbangga/BKKBN Malut">
+  <meta property="og:description" id="ogDesc" content="Pusat informasi publik dan siaran pers resmi BKKBN Perwakilan Maluku Utara.">
   <meta property="og:image" id="ogImage" content="https://bkkbnmaluthumas.github.io/portal-humas/image2.jpg">
-  <meta property="og:image:secure_url" id="ogImageSecure" content="https://bkkbnmaluthumas.github.io/portal-humas/image2.jpg">
-  <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:url" id="ogUrl" content="https://bkkbnmaluthumas.github.io/portal-humas/">
-
-  <!-- Twitter Card Tags -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" id="twTitle" content="Portal Berita Humas BKKBN Maluku Utara">
-  <meta name="twitter:description" id="twDesc" content="Pusat rilis berita resmi, edukasi kependudukan, dan informasi program Bangga Kencana Perwakilan BKKBN Maluku Utara.">
-  <meta name="twitter:image" id="twImage" content="https://bkkbnmaluthumas.github.io/portal-humas/image2.jpg">
 
   <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -106,11 +95,11 @@
       <div class="mt-10 pt-6 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
         <span class="text-xs font-bold text-slate-700">Bagikan Informasi Ini:</span>
         <div class="flex items-center gap-2">
-          <button onclick="shareDetailWA()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow transition">
-            <i class="fab fa-whatsapp"></i> WhatsApp
+          <button onclick="shareDetailWA()" class="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow transition">
+            <i class="fab fa-whatsapp text-sm"></i> Kirim ke WhatsApp
           </button>
-          <button onclick="copyDetailLink()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold flex items-center gap-1.5 shadow transition">
-            <i class="fas fa-link"></i> Salin Tautan
+          <button onclick="copyDetailLink()" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold flex items-center gap-2 shadow transition">
+            <i class="fas fa-link text-sm"></i> Salin Link Berita
           </button>
         </div>
       </div>
@@ -131,9 +120,10 @@
   <!-- Inisialisasi Firebase Konfigurasi -->
   <script src="firebase-config.js"></script>
 
-  <!-- Logika Pengambilan Data Firestore & Meta Card Synchronization -->
+  <!-- Logika Pengambilan Data Firestore & Auto-Share Link -->
   <script>
     let currentArticleData = null;
+    const WORKER_SHARE_BASE = "https://icy-mud-246fbkkbn-share.bkkbnmaluthumas.workers.dev";
 
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
@@ -190,29 +180,9 @@
       let coverImage = data.image && data.image.trim() !== "" ? data.image.trim() : "image1.jpg";
       imgEl.src = coverImage;
 
-      // ================= SINKRONISASI META CARD PREVIEW =================
-      const fullPageTitle = `${title} - Humas BKKBN Malut`;
-      document.title = fullPageTitle;
+      document.title = `${title} - Humas BKKBN Malut`;
 
-      // Tentukan URL publik absolut yang ramah bot crawler
-      let fullCoverUrl = "https://bkkbnmaluthumas.github.io/portal-humas/image2.jpg";
-      if (coverImage.startsWith("http://") || coverImage.startsWith("https://")) {
-        fullCoverUrl = coverImage;
-      } else if (!coverImage.startsWith("data:")) {
-        fullCoverUrl = `https://bkkbnmaluthumas.github.io/portal-humas/${coverImage}`;
-      }
-
-      document.getElementById("ogTitle")?.setAttribute("content", fullPageTitle);
-      document.getElementById("ogDesc")?.setAttribute("content", excerpt);
-      document.getElementById("ogImage")?.setAttribute("content", fullCoverUrl);
-      document.getElementById("ogImageSecure")?.setAttribute("content", fullCoverUrl);
-      document.getElementById("ogUrl")?.setAttribute("content", window.location.href);
-
-      document.getElementById("twTitle")?.setAttribute("content", fullPageTitle);
-      document.getElementById("twDesc")?.setAttribute("content", excerpt);
-      document.getElementById("twImage")?.setAttribute("content", fullCoverUrl);
-
-      // Render naskah artikel
+      // Format paragraf naskah
       const contentEl = document.getElementById("detailContent");
       if (data.content && data.content.includes("<p>")) {
         contentEl.innerHTML = data.content;
@@ -225,27 +195,27 @@
       document.getElementById("articleDetailCard").classList.remove("hidden");
     }
 
-   function getShareWorkerUrl() {
+    // Fungsi otomatis membuat URL berbagi yang memunculkan foto di WhatsApp
+    function getGeneratedShareUrl() {
       const params = new URLSearchParams(window.location.search);
       const articleId = params.get("id");
-      // MASUKKAN ALAMAT URL WORKER ANDA DI SINI:
-      const workerDomain = "https://bkkbn-share.<nama-subdomain>.workers.dev";
-      return `${workerDomain}?id=${articleId}`;
+      return `${WORKER_SHARE_BASE}/?id=${articleId}`;
     }
 
     function shareDetailWA() {
       if (!currentArticleData) return;
       const title = currentArticleData.title || "Berita Humas BKKBN Malut";
-      const shareUrl = getShareWorkerUrl();
+      const shareUrl = getGeneratedShareUrl();
       
+      // Susun pesan WhatsApp dengan URL terpisah agar preview langsung muncul
       const text = encodeURIComponent(`*${title}*\n\n${shareUrl}`);
       window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     }
 
     function copyDetailLink() {
-      const shareUrl = getShareWorkerUrl();
+      const shareUrl = getGeneratedShareUrl();
       navigator.clipboard.writeText(shareUrl).then(() => {
-        alert("Tautan artikel berhasil disalin!");
+        alert("Tautan berita berhasil disalin! Anda tinggal tempel (paste) di WhatsApp.");
       });
     }
   </script>
