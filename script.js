@@ -448,8 +448,8 @@ function renderDefaultTeam(container) {
   const fallbackTeam = [
     { name: "Syarif Sillia", role: "Ketua Tim Kerja Humas", photo: "", desc: "Penanggung Jawab Komunikasi Kebijakan & Media Center" },
     { name: "Husni, S.Sos", role: "Media Officer", photo: "", desc: "Peliputan Lapangan & Hubungan Kemitraan Wartawan" },
-    { name: "Samsul Ifat, SKM", role: "Desainer Grafis & Audio Visual", photo: "", desc: "Anggota HUMAS - Produksi Media Informasi Edukatif" },
-    { name: "Administrator Redaksi", role: "Administrator Portal", photo: "", desc: "Anggota HUMAS - Manajemen Konten & Publikasi Portal" }
+    { name: "xxxxxxxx xxxxxxx", role: "Desainer Grafis & Audio Visual", photo: "", desc: "Anggota HUMAS - Produksi Media Informasi Edukatif" },
+    { name: "bbbbbbb bbbbbbbbbb", role: "Administrator Portal", photo: "", desc: "Anggota HUMAS - Manajemen Konten & Publikasi Portal" }
   ];
 
   container.innerHTML = fallbackTeam.map(m => `
