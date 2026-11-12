@@ -285,7 +285,7 @@
         <!-- Sisi Kiri (25% / 1 Kolom): Pembungkus Vertikal Berisi 2 Widget -->
         <div class="lg:col-span-1 flex flex-col gap-5">
           
-          <!-- 1. Widget Artikel Terbaru -->
+          <!-- 1. Widget Artikel Terbaru (Dinamis Terhubung Cloud Firestore) -->
           <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
             <div class="pb-3 mb-3 border-b border-slate-100 flex items-center justify-between">
               <h3 class="font-extrabold text-slate-900 font-heading text-base uppercase tracking-wider flex items-center gap-2">
@@ -294,46 +294,10 @@
               </h3>
             </div>
 
-            <!-- Daftar Artikel Terbaru -->
+            <!-- Daftar Artikel Terbaru Otomatis -->
             <div id="latestArticlesList" class="flex flex-col divide-y divide-slate-100">
-              <div class="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 cursor-pointer group" onclick="location.href='detail.html?id=101'">
-                <img src="image1.jpg" alt="Thumb" class="w-12 h-12 rounded-lg object-cover flex-shrink-0 group-hover:opacity-80 transition" />
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-[11px] font-semibold text-slate-800 line-clamp-2 group-hover:text-bkkbn-primary transition leading-snug">
-                    Akselerasi Penurunan Stunting di Maluku Utara
-                  </h4>
-                  <span class="text-[9px] text-slate-400 block mt-0.5">24 Okt 2024</span>
-                </div>
-              </div>
-
-              <div class="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 cursor-pointer group" onclick="location.href='detail.html?id=102'">
-                <img src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=150&q=80" alt="Thumb" class="w-12 h-12 rounded-lg object-cover flex-shrink-0 group-hover:opacity-80 transition" />
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-[11px] font-semibold text-slate-800 line-clamp-2 group-hover:text-bkkbn-primary transition leading-snug">
-                    Pelayanan KB Serentak Sejuta Akseptor (PSA) Sukses
-                  </h4>
-                  <span class="text-[9px] text-slate-400 block mt-0.5">25 Okt 2024</span>
-                </div>
-              </div>
-
-              <div class="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 cursor-pointer group" onclick="location.href='detail.html?id=103'">
-                <img src="https://images.unsplash.com/photo-1516307365426-bea591f05011?auto=format&fit=crop&w=150&q=80" alt="Thumb" class="w-12 h-12 rounded-lg object-cover flex-shrink-0 group-hover:opacity-80 transition" />
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-[11px] font-semibold text-slate-800 line-clamp-2 group-hover:text-bkkbn-primary transition leading-snug">
-                    Wisuda 350 Lansia Tangguh Standard BKL
-                  </h4>
-                  <span class="text-[9px] text-slate-400 block mt-0.5">23 Okt 2024</span>
-                </div>
-              </div>
-
-              <div class="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 cursor-pointer group" onclick="location.href='detail.html?id=104'">
-                <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=150&q=80" alt="Thumb" class="w-12 h-12 rounded-lg object-cover flex-shrink-0 group-hover:opacity-80 transition" />
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-[11px] font-semibold text-slate-800 line-clamp-2 group-hover:text-bkkbn-primary transition leading-snug">
-                    Diseminasi Audit Kasus Stunting Semester II
-                  </h4>
-                  <span class="text-[9px] text-slate-400 block mt-0.5">22 Okt 2024</span>
-                </div>
+              <div class="py-4 text-center text-xs text-slate-400">
+                <i class="fas fa-spinner fa-spin mr-1 text-bkkbn-primary"></i> Memuat artikel...
               </div>
             </div>
           </div>
@@ -769,5 +733,65 @@
 
   <!-- Logika Aplikasi Web -->
   <script src="script.js"></script>
+
+  <!-- Sinkronisasi Realtime Widget Artikel Terbaru dari Cloud Firestore -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const waitDb = setInterval(() => {
+        if (typeof db !== "undefined") {
+          clearInterval(waitDb);
+          listenWidgetLatestArticles();
+        }
+      }, 150);
+    });
+
+    function listenWidgetLatestArticles() {
+      const container = document.getElementById("latestArticlesList");
+      if (!container) return;
+
+      db.collection("articles").onSnapshot(snapshot => {
+        if (snapshot.empty) {
+          container.innerHTML = `<p class="py-4 text-center text-xs text-slate-400">Belum ada artikel tersedia.</p>`;
+          return;
+        }
+
+        let articles = [];
+        snapshot.forEach(doc => {
+          articles.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Urutkan dari dokumen paling baru
+        articles.sort((a, b) => {
+          const timeA = a.createdAt?.seconds || 0;
+          const timeB = b.createdAt?.seconds || 0;
+          return timeB - timeA;
+        });
+
+        // Ambil 4 item terbaru
+        const latestFour = articles.slice(0, 4);
+
+        container.innerHTML = latestFour.map(item => {
+          const thumb = item.image && item.image.trim() !== "" ? item.image : "image1.jpg";
+          const title = item.title || "Tanpa Judul";
+          const date = item.date || "-";
+
+          return `
+            <div class="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 cursor-pointer group" onclick="location.href='detail.html?id=${item.id}'">
+              <img src="${thumb}" alt="Thumb" class="w-12 h-12 rounded-lg object-cover flex-shrink-0 group-hover:opacity-80 transition bg-slate-100 border border-slate-100" onerror="this.onerror=null; this.src='image1.jpg';" />
+              <div class="flex-1 min-w-0">
+                <h4 class="text-[11px] font-semibold text-slate-800 line-clamp-2 group-hover:text-bkkbn-primary transition leading-snug">
+                  ${title}
+                </h4>
+                <span class="text-[9px] text-slate-400 block mt-0.5">${date}</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }, err => {
+        console.error("Gagal menyinkronkan widget Artikel Terbaru:", err);
+        container.innerHTML = `<p class="py-4 text-center text-xs text-rose-500">Gagal memuat data artikel.</p>`;
+      });
+    }
+  </script>
 </body>
 </html>
