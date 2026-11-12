@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" translate="no">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
   <title>Portal Berita & Media Center Humas Perwakilan BKKBN</title>
   
   <!-- Favicon -->
@@ -222,7 +223,7 @@
             </div>
           </div>
 
-          <!-- 2. WIDGET PENGUMUMAN -->
+          <!-- 2. WIDGET PENGUMUMAN (DINAMIS TERHUBUNG CLOUD FIRESTORE) -->
           <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
             <div class="flex items-center justify-between pb-2 border-b-2 border-amber-400 mb-5">
               <h3 class="text-lg font-bold text-[#004B87] font-heading">
@@ -233,42 +234,10 @@
               </a>
             </div>
 
-            <!-- Daftar Kartu Pengumuman Mini -->
-            <div class="flex flex-col gap-4">
-              <div class="flex items-start gap-3 p-2 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer">
-                <div class="w-16 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
-                  <img src="poster.jpg" alt="Donatur GENTING" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/120x160/004B87/FFFFFF?text=GENTING';" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-xs font-bold text-slate-800 leading-snug hover:text-[#0088CC] transition line-clamp-3">
-                    Donatur Gerakan Orang Tua Asuh Cegah Stunting (GENTING) Tahun 2026
-                  </h4>
-                  <span class="text-[10px] text-slate-400 block mt-1.5">27 Oktober 2026</span>
-                </div>
-              </div>
-
-              <div class="flex items-start gap-3 p-2 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer">
-                <div class="w-16 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
-                  <img src="image1.jpg" alt="Mudik Nyaman" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/120x160/0088CC/FFFFFF?text=MUDIK';" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-xs font-bold text-slate-800 leading-snug hover:text-[#0088CC] transition line-clamp-3">
-                    MUDIK NYAMAN BERSAMA KELUARGA TAHUN 2026
-                  </h4>
-                  <span class="text-[10px] text-slate-400 block mt-1.5">17 Maret 2026</span>
-                </div>
-              </div>
-
-              <div class="flex items-start gap-3 p-2 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer">
-                <div class="w-16 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
-                  <img src="logo.png" alt="Survei Penilaian Integritas" class="w-full h-full object-contain p-1" onerror="this.onerror=null; this.src='https://placehold.co/120x160/EEEEEE/004B87?text=SPI';" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-xs font-bold text-slate-800 leading-snug hover:text-[#0088CC] transition line-clamp-3">
-                    Survei Penilaian Integritas (SPI) Kemendukbangga
-                  </h4>
-                  <span class="text-[10px] text-slate-400 block mt-1.5">12 September 2025</span>
-                </div>
+            <!-- Wadah Kartu Pengumuman Realtime -->
+            <div id="publicAnnouncementsList" class="flex flex-col gap-4">
+              <div class="py-4 text-center text-xs text-slate-400">
+                <i class="fas fa-spinner fa-spin mr-1 text-amber-500"></i> Memuat pengumuman...
               </div>
             </div>
           </div>
@@ -734,17 +703,19 @@
   <!-- Logika Aplikasi Web -->
   <script src="script.js"></script>
 
-  <!-- Sinkronisasi Realtime Widget Artikel Terbaru dari Cloud Firestore -->
+  <!-- Sinkronisasi Realtime Widget Artikel Terbaru & Pengumuman dari Cloud Firestore -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const waitDb = setInterval(() => {
         if (typeof db !== "undefined") {
           clearInterval(waitDb);
           listenWidgetLatestArticles();
+          listenWidgetAnnouncements();
         }
       }, 150);
     });
 
+    // 1. Sinkronisasi Widget Artikel Terbaru
     function listenWidgetLatestArticles() {
       const container = document.getElementById("latestArticlesList");
       if (!container) return;
@@ -760,14 +731,8 @@
           articles.push({ id: doc.id, ...doc.data() });
         });
 
-        // Urutkan dari dokumen paling baru
-        articles.sort((a, b) => {
-          const timeA = a.createdAt?.seconds || 0;
-          const timeB = b.createdAt?.seconds || 0;
-          return timeB - timeA;
-        });
+        articles.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
-        // Ambil 4 item terbaru
         const latestFour = articles.slice(0, 4);
 
         container.innerHTML = latestFour.map(item => {
@@ -791,6 +756,70 @@
         console.error("Gagal menyinkronkan widget Artikel Terbaru:", err);
         container.innerHTML = `<p class="py-4 text-center text-xs text-rose-500">Gagal memuat data artikel.</p>`;
       });
+    }
+
+    // 2. Sinkronisasi Widget Pengumuman
+    function listenWidgetAnnouncements() {
+      const container = document.getElementById("publicAnnouncementsList");
+      if (!container) return;
+
+      db.collection("announcements").onSnapshot(snapshot => {
+        if (!snapshot.empty) {
+          let items = [];
+          snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+          
+          items.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+          renderAnnouncementsHTML(container, items.slice(0, 3), true);
+        } else {
+          // Cadangan jika admin menginput pengumuman di koleksi 'articles' dengan tag/kategori 'Pengumuman'
+          db.collection("articles").onSnapshot(artSnap => {
+            let filtered = [];
+            artSnap.forEach(doc => {
+              const d = doc.data();
+              const cat = (d.category || d.tag || "").toLowerCase();
+              if (cat.includes("pengumuman")) {
+                filtered.push({ id: doc.id, ...d });
+              }
+            });
+
+            if (filtered.length === 0) {
+              container.innerHTML = `<p class="py-4 text-center text-xs text-slate-400">Belum ada pengumuman terbaru.</p>`;
+              return;
+            }
+
+            filtered.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            renderAnnouncementsHTML(container, filtered.slice(0, 3), false);
+          });
+        }
+      }, err => {
+        console.error("Gagal memuat pengumuman:", err);
+        container.innerHTML = `<p class="py-4 text-center text-xs text-rose-500">Gagal memuat pengumuman.</p>`;
+      });
+    }
+
+    function renderAnnouncementsHTML(container, list, isFromAnnouncementsCollection) {
+      container.innerHTML = list.map(item => {
+        const thumb = item.image && item.image.trim() !== "" ? item.image : "poster.jpg";
+        const title = item.title || "Pengumuman Resmi";
+        const date = item.date || "-";
+        const clickAction = isFromAnnouncementsCollection && item.link 
+          ? `window.open('${item.link}', '_blank')` 
+          : `location.href='detail.html?id=${item.id}'`;
+
+        return `
+          <div onclick="${clickAction}" class="flex items-start gap-3 p-2 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100 cursor-pointer">
+            <div class="w-16 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
+              <img src="${thumb}" alt="${title}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='poster.jpg';" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h4 class="text-xs font-bold text-slate-800 leading-snug hover:text-[#0088CC] transition line-clamp-3">
+                ${title}
+              </h4>
+              <span class="text-[10px] text-slate-400 block mt-1.5">${date}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
     }
   </script>
 </body>
